@@ -1,0 +1,5 @@
+put int, i, 1
+put boolean, b, true
+print b
+clrmainl
+eof
