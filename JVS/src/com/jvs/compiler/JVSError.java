@@ -2,11 +2,8 @@ package com.jvs.compiler;
 
 public class JVSError
 {
-    public static void log(String file, int line, String message, String stmt, int pos, int end, boolean isRed)
+    public static void log(String file, int line, String message, String stmt, int pos, int end)
     {
-        String red="\u001B[31m";
-        String reset="\u001B[0m";
-
         String e1='|'+((file.endsWith(".jvs"))?file:file+".jvs")+": Error at line "+line+" - "+message+"\n|";
         String e2="|   "+stmt;
         String e3="|   ";
@@ -24,9 +21,9 @@ public class JVSError
             }
         }
 
-        System.out.println(((isRed)?red: "")+e1);
+        System.out.println(e1);
         System.out.println(e2);
         System.out.println(e3);
-        System.out.println(e4+'\n'+reset);
+        System.out.println(e4+'\n');
     }
 }
