@@ -1,0 +1,51 @@
+{
+    "java.project.sourcePaths": ["src"],
+    "java.project.outputPath": "bin",
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar"
+    ],
+    "cSpell.words": [
+        "JVSE",
+        "archvm",
+        "cand",
+        "clrmainl",
+        "clrtlist",
+        "cor",
+        "decr",
+        "fcmpe",
+        "fcmpgt",
+        "fcmpgte",
+        "fcmplt",
+        "fcmplte",
+        "fcmpne",
+        "fmod",
+        "fmult",
+        "fpow",
+        "FUNCCALL",
+        "gotoln",
+        "icmpe",
+        "icmpgt",
+        "icmpgte",
+        "icmplt",
+        "icmplte",
+        "icmpne",
+        "imod",
+        "imult",
+        "ipow",
+        "leq",
+        "lne",
+        "lnot",
+        "lor",
+        "lxor",
+        "MULT"
+    ],
+    "cSpell.customDictionaries": {
+        "custom-dictionary-workspace": {
+            "name": "custom-dictionary-workspace",
+            "path": "${workspaceFolder:JVS}/.cspell/custom-dictionary-workspace.txt",
+            "addWords": true,
+            "scope": "workspace"
+        }
+    },
+    "java.debug.settings.onBuildFailureProceed": true
+}

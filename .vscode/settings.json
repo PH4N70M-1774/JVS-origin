@@ -1,0 +1,16 @@
+{
+    "cSpell.words": [
+        "CLRMAINL",
+        "CLRTLIST",
+        "FUNCDEC",
+        "JVSE"
+    ],
+    "cSpell.customDictionaries": {
+        "custom-dictionary-workspace": {
+            "name": "custom-dictionary-workspace",
+            "path": "${workspaceFolder:JVS-origin}/.cspell/custom-dictionary-workspace.txt",
+            "addWords": true,
+            "scope": "workspace"
+        }
+    }
+}

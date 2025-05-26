@@ -1,0 +1,17 @@
+# Custom Dictionary Words
+imod
+fmod
+ipow
+fpow
+decr
+cmpgt
+cmplte
+cmplt
+cmpgte
+cmpe
+cmpne
+logvm
+imult
+fmult
+azzert
+gotu

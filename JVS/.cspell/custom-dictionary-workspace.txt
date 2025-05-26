@@ -1,0 +1,13 @@
+# Custom Dictionary Words
+azzert
+cmpe
+cmpgt
+cmpgte
+cmplt
+cmplte
+cmpne
+decr
+FUNCDEC
+gotu
+jvse
+logvm
