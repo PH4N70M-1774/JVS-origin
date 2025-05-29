@@ -67,7 +67,6 @@ public class VMInterpreter
         String type=st.nextToken();
         String name=st.nextToken();
         String value=((count==3)?st.nextToken():"");
-        System.out.println(type+" "+name+" "+value);
         if(count==2)
         {
             main.addEmpty(type, name);
@@ -2224,7 +2223,9 @@ public class VMInterpreter
         {
             if (part.startsWith("\"") && part.endsWith("\""))
             {
-                System.out.print(part.substring(1, part.length() - 1));
+                // Remove quotes and interpret escape sequences
+                String literal = part.substring(1, part.length() - 1);
+                System.out.print(unescapeJavaString(literal));
             }
             else if (main.contains(part))
             {
@@ -2391,59 +2392,34 @@ public class VMInterpreter
         return false;
     }
 
-    /**
-     * This method is a helper method to get JVS Integer from a String.
-     *
-     * @param value The value or name of variable containing a boolean variable.
-     * @return The JVS Integer value (long datatype in Java).
-     */
-    // private long searchAndGetInt(String value)
-    // {
-    //     if(isInt(value))
-    //     {
-    //         return Long.parseLong(value);
-    //     }
-    //     else if(main.contains(value))
-    //     {
-    //         return main.getIntVar(value);
-    //     }
-    //     else if(temp.contains(value))
-    //     {
-    //         return temp.getIntVar(value);
-    //     }
-    //     else
-    //     {
-    //         VMError.logvm("Invalid value.");
-    //     }
-
-    //     return 0;
-    // }
-
-    /**
-     * This method is a helper method to get JVS Float from a String.
-     *
-     * @param value The value or name of variable containing a boolean variable.
-     * @return The JVS Float value (double datatype in Java).
-     */
-    // private double searchAndGetFloat(String value)
-    // {
-    //     if(isInt(value))
-    //     {
-    //         return Double.parseDouble(value);
-    //     }
-    //     else if(main.contains(value))
-    //     {
-    //         return main.getFloatVar(value);
-    //     }
-    //     else if(temp.contains(value))
-    //     {
-    //         return temp.getFloatVar(value);
-    //     }
-    //     else
-    //     {
-    //         VMError.logvm("Invalid value.");
-    //     }
-
-    //     return 0;
-    // }
+    // Helper method to interpret escape sequences in string literals
+    private String unescapeJavaString(String str)
+    {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < str.length(); i++)
+        {
+            char ch = str.charAt(i);
+            if (ch == '\\' && i + 1 < str.length())
+            {
+                char next = str.charAt(i + 1);
+                switch (next)
+                {
+                    case 'b': sb.append('\b'); i++; break;
+                    case 't': sb.append('\t'); i++; break;
+                    case 'n': sb.append('\n'); i++; break;
+                    case 'f': sb.append('\f'); i++; break;
+                    case 'r': sb.append('\r'); i++; break;
+                    case '\"': sb.append('\"'); i++; break;
+                    case '\'': sb.append('\''); i++; break;
+                    case '\\': sb.append('\\'); i++; break;
+                    default: sb.append(ch); break;
+                }
+            }
+            else
+            {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
+    }
 }
