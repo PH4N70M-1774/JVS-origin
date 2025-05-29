@@ -32,7 +32,6 @@ public class JVSELoader
             while(sc.hasNextLine())
             {
                 String line = sc.nextLine().trim();
-                System.out.println(line);
                 if(line.startsWith("FUNCDEC")||line.startsWith("funcdec"))
                 {
                     methods.put(line.substring(8), lineCount);
@@ -62,7 +61,6 @@ public class JVSELoader
         {
             System.out.println("File not found");
         }
-        System.out.println(instructions);
         return new JVSEInstructions(instructions, methods);
     }
 }

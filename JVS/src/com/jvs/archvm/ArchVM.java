@@ -18,15 +18,19 @@ public class ArchVM
         vmi=new VMInterpreter(main, temp);
         ct=new Context(file);
         instructions=JVSELoader.load(file);
-        System.out.println(instructions);
     }
 
     public void start()
     {
         for(line=1;line<=instructions.getInstructionCount();line++)
         {
-            System.out.print("\n"+instructions.getInstruction(line)+((checkForMarker(instructions.getInstruction(line)))?"":": "));
+            int prevLine = line;
             interpret(instructions.getInstruction(line));
+            // If a jump occurred, adjust for the for-loop increment
+            if (line != prevLine)
+            {
+                line--; // Compensate for the for-loop's increment
+            }
         }
     }
 
@@ -85,11 +89,5 @@ public class ArchVM
     {
         line=newLine;
         ct.addCall(name, newLine);
-    }
-
-    private boolean checkForMarker(Instruction instruction)
-    {
-        Opcode op=instruction.getOpcode();
-        return (op==Opcode.FUNCDEC || op==Opcode.EOF || op==Opcode.CALL);
     }
 }
