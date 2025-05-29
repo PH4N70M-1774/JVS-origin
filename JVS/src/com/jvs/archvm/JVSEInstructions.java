@@ -77,7 +77,7 @@ public class JVSEInstructions
         toString+="Instructions:\n[\n";
         for(int i=1;i<=getInstructionCount();i++)
         {
-            toString+="\t"+getInstruction(i)+"\n";
+            toString+="\t"+i+":"+getInstruction(i)+"\n";
         }
         toString+="]";
 

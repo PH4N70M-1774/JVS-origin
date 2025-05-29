@@ -1,371 +1,303 @@
 package com.jvs.archvm;
 
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 /**
- * The VarManager class in Java is designed to manage variables of different types (int, float, char, boolean)
- * with dynamic arrays and a map for efficient storage and retrieval.
+ * VarManager manages variables of types int, float, char, and boolean.
+ * It stores variable names and values separately by type and provides
+ * efficient add, set, get, and clear operations.
  */
-public class VarManager
-{
+public class VarManager {
+
     private static final int INITIAL_CAPACITY = 4;
 
-    private Map<String, Type> varMap;
-    private String[] intNames, floatNames, charNames, boolNames;
+    private Map<String, Type> variableMap;
+
+    private List<String> intVarNames;
+    private List<String> floatVarNames;
+    private List<String> charVarNames;
+    private List<String> boolVarNames;
+
     private long[] intValues;
     private double[] floatValues;
     private char[] charValues;
     private boolean[] boolValues;
-    private int intCount, floatCount, charCount, boolCount;
-    private int intLength, floatLength, charLength, boolLength;
 
-    private enum Type
-    {
-        INT(1), FLOAT(2), CHAR(3), BOOLEAN(4);
-        int typeCode;
+    private int intCount;
+    private int floatCount;
+    private int charCount;
+    private int boolCount;
 
-        private Type(int typeCode)
-        {
-            this.typeCode = typeCode;
-        }
-
-        public int getTypeCode()
-        {
-            return typeCode;
-        }
+    private enum Type {
+        INT, FLOAT, CHAR, BOOLEAN
     }
 
-    public VarManager()
-    {
-        varMap = new HashMap<>();
-        intNames = floatNames = charNames = boolNames = new String[INITIAL_CAPACITY];
-        intValues=new long[INITIAL_CAPACITY];
+    /**
+     * Creates a new VarManager with initial capacity.
+     */
+    public VarManager() {
+        variableMap = new HashMap<>();
+
+        intVarNames = new ArrayList<>();
+        floatVarNames = new ArrayList<>();
+        charVarNames = new ArrayList<>();
+        boolVarNames = new ArrayList<>();
+
+        intValues = new long[INITIAL_CAPACITY];
         floatValues = new double[INITIAL_CAPACITY];
         charValues = new char[INITIAL_CAPACITY];
         boolValues = new boolean[INITIAL_CAPACITY];
+
         intCount = 0;
         floatCount = 0;
         charCount = 0;
         boolCount = 0;
-
-        intLength = 0;
-        floatLength = 0;
-        charLength = 0;
-        boolLength = 0;
     }
 
-    public void addEmpty(String type, String name)
-    {
-        switch(type)
-        {
-            case "int" -> addIntVar(name, 0);
-            case "float" -> addFloatVar(name, 0.0f);
+    /**
+     * Adds a variable of a given type with default value.
+     * @param type  Variable type ("int", "float", "char", "boolean").
+     * @param name  Variable name.
+     */
+    public void addEmpty(String type, String name) {
+        switch (type) {
+            case "int" -> addIntVar(name, 0L);
+            case "float" -> addFloatVar(name, 0.0);
             case "char" -> addCharVar(name, '\0');
             case "boolean" -> addBoolVar(name, false);
             default -> VMError.logvm("Invalid type: " + type);
         }
     }
 
-    public <T> void addVar(String name, T value)
-    {
-        if(value instanceof Integer)
-        {
-            addIntVar(name, (int)value);
-        }
-        else if(value instanceof Float)
-        {
-            addFloatVar(name, (float)value);
-        }
-        else if(value instanceof Character)
-        {
-            addCharVar(name, (char)value);
-        }
-        else if(value instanceof Boolean)
-        {
-            addBoolVar(name, (boolean)value);
-        }
-        else
-        {
+    /**
+     * Adds a variable with a given value. Supports Integer, Float, Character, Boolean.
+     * @param name  Variable name.
+     * @param value Variable value.
+     * @param <T>   Variable type.
+     */
+    public <T> void addVar(String name, T value) {
+        if (value instanceof Integer) {
+            addIntVar(name, ((Integer) value).longValue());
+        } else if (value instanceof Float) {
+            addFloatVar(name, ((Float) value).doubleValue());
+        } else if (value instanceof Character) {
+            addCharVar(name, (Character) value);
+        } else if (value instanceof Boolean) {
+            addBoolVar(name, (Boolean) value);
+        } else {
             VMError.logvm("Invalid type for variable " + name);
         }
     }
 
-    public <T> void setVar(String name, T value)
-    {
-        if(varMap.containsKey(name))
-        {
-            if(varMap.get(name) == Type.INT)
-            {
-                intValues[getIndex(name, Type.INT)] = (long)value;
-            }
-            else if (varMap.get(name) == Type.FLOAT)
-            {
-                floatValues[getIndex(name, Type.FLOAT)] = (double)value;
-            }
-            else if (varMap.get(name) == Type.CHAR)
-            {
-                charValues[getIndex(name, Type.CHAR)] = (char)value;
-            }
-            else if (varMap.get(name) == Type.BOOLEAN)
-            {
-                boolValues[getIndex(name, Type.BOOLEAN)] = (boolean)value;
-            }
-            else
-            {
-                VMError.logvm("Invalid type for variable " + name);
-            }
-        }
-        else
-        {
+    /**
+     * Sets the value of an existing variable.
+     * @param name  Variable name.
+     * @param value New value.
+     * @param <T>   Value type.
+     */
+    public <T> void setVar(String name, T value) {
+        if (!variableMap.containsKey(name)) {
             VMError.logvm("Variable " + name + " not found");
+            return;
+        }
+        Type type = variableMap.get(name);
+        int index = getIndex(name, type);
+        if (index == -1) {
+            VMError.logvm("Variable " + name + " not found in storage");
+            return;
+        }
+
+        switch (type) {
+            case INT -> intValues[index] = ((Number) value).longValue();
+            case FLOAT -> floatValues[index] = ((Number) value).doubleValue();
+            case CHAR -> charValues[index] = (Character) value;
+            case BOOLEAN -> boolValues[index] = (Boolean) value;
         }
     }
 
-    public long getIntVar(String name)
-    {
-        if (varMap.containsKey(name) && varMap.get(name) == Type.INT)
-        {
+    /**
+     * Returns the type code for a given variable name.
+     * Type codes:
+     *   1 = int
+     *   2 = float
+     *   3 = char
+     *   4 = boolean
+     *   0 = variable not found
+     *
+     * @param name Variable name
+     * @return int representing the variable type code
+     */
+    public int getTypeCode(String name) {
+        Type type = variableMap.get(name);
+        if (type == null) {
+            return 0;
+        }
+
+        return switch (type) {
+            case INT -> 1;
+            case FLOAT -> 2;
+            case CHAR -> 3;
+            case BOOLEAN -> 4;
+        };
+    }
+
+    /**
+     * Retrieves the int value of a variable.
+     * @param name Variable name.
+     * @return Variable value or 0 if not found or wrong type.
+     */
+    public long getIntVar(String name) {
+        if (variableMap.containsKey(name) && variableMap.get(name) == Type.INT) {
             return intValues[getIndex(name, Type.INT)];
         }
         VMError.logvm("Variable " + name + " not found or invalid type");
-        return 0; // Default return value
+        return 0L;
     }
 
-    public double getFloatVar(String name)
-    {
-        if (varMap.containsKey(name) && varMap.get(name) == Type.FLOAT)
-        {
+    /**
+     * Retrieves the float value of a variable.
+     * @param name Variable name.
+     * @return Variable value or 0.0 if not found or wrong type.
+     */
+    public double getFloatVar(String name) {
+        if (variableMap.containsKey(name) && variableMap.get(name) == Type.FLOAT) {
             return floatValues[getIndex(name, Type.FLOAT)];
         }
         VMError.logvm("Variable " + name + " not found or invalid type");
-        return 0.0; // Default return value
+        return 0.0;
     }
 
-    public char getCharVar(String name)
-    {
-        if (varMap.containsKey(name) && varMap.get(name) == Type.CHAR)
-        {
+    /**
+     * Retrieves the char value of a variable.
+     * @param name Variable name.
+     * @return Variable value or '\0' if not found or wrong type.
+     */
+    public char getCharVar(String name) {
+        if (variableMap.containsKey(name) && variableMap.get(name) == Type.CHAR) {
             return charValues[getIndex(name, Type.CHAR)];
         }
         VMError.logvm("Variable " + name + " not found or invalid type");
-        return '\0'; // Default return value
+        return '\0';
     }
 
-    public boolean getBoolVar(String name)
-    {
-        if (varMap.containsKey(name))// && varMap.get(name) == Type.BOOLEAN)
-        {
+    /**
+     * Retrieves the boolean value of a variable.
+     * @param name Variable name.
+     * @return Variable value or false if not found or wrong type.
+     */
+    public boolean getBoolVar(String name) {
+        if (variableMap.containsKey(name) && variableMap.get(name) == Type.BOOLEAN) {
             return boolValues[getIndex(name, Type.BOOLEAN)];
         }
         VMError.logvm("Variable " + name + " not found or invalid type");
-        return false; // Default return value
+        return false;
     }
 
-    public int getTypeCode(String name)
-    {
-        if(varMap.containsKey(name))
-        {
-            return varMap.get(name).getTypeCode();
-        }
-        return -1;
+    /**
+     * Checks if a variable exists.
+     * @param name Variable name.
+     * @return true if variable exists, false otherwise.
+     */
+    public boolean contains(String name) {
+        return variableMap.containsKey(name);
     }
 
-    public boolean contains(String name)
-    {
-        return varMap.containsKey(name);
-    }
+    /**
+     * Clears all variables and resets VarManager to initial empty state.
+     */
+    public void clear() {
+        variableMap.clear();
+        intVarNames.clear();
+        floatVarNames.clear();
+        charVarNames.clear();
+        boolVarNames.clear();
 
-    public void clear()
-    {
-        varMap = new HashMap<>();
-        intNames = floatNames = charNames = boolNames = new String[INITIAL_CAPACITY];
-        intValues=new long[INITIAL_CAPACITY];
+        intValues = new long[INITIAL_CAPACITY];
         floatValues = new double[INITIAL_CAPACITY];
         charValues = new char[INITIAL_CAPACITY];
         boolValues = new boolean[INITIAL_CAPACITY];
+
         intCount = 0;
         floatCount = 0;
         charCount = 0;
         boolCount = 0;
-
-        intLength = 0;
-        floatLength = 0;
-        charLength = 0;
-        boolLength = 0;
     }
 
-    private int getIndex(String name, Type type)
-    {
-        switch(type)
-        {
-            case INT:
-                for(int i = 0; i < intCount; i++)
-                {
-                    if(intNames[i].equals(name))
-                    {
-                        return i;
-                    }
-                }
-                break;
-            case FLOAT:
-                for(int i = 0; i < floatCount; i++)
-                {
-                    if(floatNames[i].equals(name))
-                    {
-                        return i;
-                    }
-                }
-                break;
-            case CHAR:
-                for(int i = 0; i < charCount; i++)
-                {
-                    if(charNames[i].equals(name))
-                    {
-                        return i;
-                    }
-                }
-                break;
-            case BOOLEAN:
-                for(int i = 0; i < boolCount; i++)
-                {
-                    if(boolNames[i].equals(name))
-                    {
-                        return i;
-                    }
-                }
-                break;
-        }
+    // PRIVATE METHODS
 
+    private int getIndex(String name, Type type) {
+        List<String> namesList = switch (type) {
+            case INT -> intVarNames;
+            case FLOAT -> floatVarNames;
+            case CHAR -> charVarNames;
+            case BOOLEAN -> boolVarNames;
+        };
+
+        for (int i = 0; i < namesList.size(); i++) {
+            if (namesList.get(i).equals(name)) {
+                return i;
+            }
+        }
         return -1;
     }
 
-    private void addIntVar(String name, int value)
-    {
-        intLength++;
-        varMap.put(name, Type.INT);
-
-        if(intLength < intValues.length)
-        {
-            intNames[intCount] = name;
-            intValues[intCount] = value;
+    private void addIntVar(String name, long value) {
+        if (intCount == intValues.length) {
+            expandIntArray();
         }
-        else
-        {
-            expandIntArr();
-            intNames[intCount] = name;
-            intValues[intCount] = value;
-        }
-
+        intVarNames.add(name);
+        intValues[intCount] = value;
         intCount++;
+        variableMap.put(name, Type.INT);
     }
 
-    private void addFloatVar(String name, float value)
-    {
-        floatLength++;
-        varMap.put(name, Type.FLOAT);
-
-        if(floatLength < floatValues.length)
-        {
-            floatNames[floatCount] = name;
-            floatValues[floatCount] = value;
+    private void addFloatVar(String name, double value) {
+        if (floatCount == floatValues.length) {
+            expandFloatArray();
         }
-        else
-        {
-            expandFloatArr();
-            floatNames[floatCount] = name;
-            floatValues[floatCount] = value;
-        }
-
+        floatVarNames.add(name);
+        floatValues[floatCount] = value;
         floatCount++;
+        variableMap.put(name, Type.FLOAT);
     }
 
-    private void addCharVar(String name, char value)
-    {
-        charLength++;
-        varMap.put(name, Type.CHAR);
-
-        if(charLength < charValues.length)
-        {
-            charNames[charCount] = name;
-            charValues[charCount] = value;
+    private void addCharVar(String name, char value) {
+        if (charCount == charValues.length) {
+            expandCharArray();
         }
-        else
-        {
-            expandCharArr();
-            charNames[charCount] = name;
-            charValues[charCount] = value;
-        }
-
+        charVarNames.add(name);
+        charValues[charCount] = value;
         charCount++;
+        variableMap.put(name, Type.CHAR);
     }
 
-    private void addBoolVar(String name, boolean value)
-    {
-        boolLength++;
-        varMap.put(name, Type.BOOLEAN);
-
-        if(boolLength < boolValues.length)
-        {
-            boolNames[boolCount] = name;
-            boolValues[boolCount] = value;
+    private void addBoolVar(String name, boolean value) {
+        if (boolCount == boolValues.length) {
+            expandBoolArray();
         }
-        else
-        {
-            expandBoolArr();
-            boolNames[boolCount] = name;
-            boolValues[boolCount] = value;
-        }
-
+        boolVarNames.add(name);
+        boolValues[boolCount] = value;
         boolCount++;
+        variableMap.put(name, Type.BOOLEAN);
     }
 
-    private void expandIntArr()
-    {
-        long temp[] = intValues;
-        String tempStr[] = intNames;
-
-        intValues = new long[temp.length+2];
-        intNames = new String[tempStr.length+2];
-
-        System.arraycopy(temp, 0, intValues, 0, temp.length);
-        System.arraycopy(tempStr, 0, intNames, 0, tempStr.length);
+    private void expandIntArray() {
+        int newSize = intValues.length + 4;
+        intValues = Arrays.copyOf(intValues, newSize);
     }
 
-    private void expandFloatArr()
-    {
-        double temp[] = floatValues;
-        String tempStr[] = floatNames;
-
-        floatValues = new double[temp.length + 2];
-        floatNames = new String[tempStr.length + 2];
-
-        System.arraycopy(temp, 0, floatValues, 0, temp.length);
-        System.arraycopy(tempStr, 0, floatNames, 0, tempStr.length);
+    private void expandFloatArray() {
+        int newSize = floatValues.length + 4;
+        floatValues = Arrays.copyOf(floatValues, newSize);
     }
 
-    private void expandCharArr()
-    {
-        char temp[] = charValues;
-        String tempStr[] = charNames;
-
-        charValues = new char[temp.length + 2];
-        charNames = new String[tempStr.length + 2];
-
-        System.arraycopy(temp, 0, charValues, 0, temp.length);
-        System.arraycopy(tempStr, 0, charNames, 0, tempStr.length);
+    private void expandCharArray() {
+        int newSize = charValues.length + 4;
+        charValues = Arrays.copyOf(charValues, newSize);
     }
 
-    private void expandBoolArr()
-    {
-        boolean temp[] = boolValues;
-        String tempStr[] = boolNames;
-
-        boolValues = new boolean[temp.length + 2];
-        boolNames = new String[tempStr.length + 2];
-
-        System.arraycopy(temp, 0, boolValues, 0, temp.length);
-        System.arraycopy(tempStr, 0, boolNames, 0, tempStr.length);
+    private void expandBoolArray() {
+        int newSize = boolValues.length + 4;
+        boolValues = Arrays.copyOf(boolValues, newSize);
     }
-
 }

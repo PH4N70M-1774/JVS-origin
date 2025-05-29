@@ -61,9 +61,12 @@ public enum Opcode
             case "ASSERT", "assert"-> ASSERT;           //Method implemented (In VMInterpreter class).
             case "GOTO", "goto"-> GOTO;                 //Method implemented (In VMInterpreter class).
             case "PRINT", "print"-> PRINT;              //Method implemented (In VMInterpreter class).
+            case "CLRMAINL", "clrmainl"->CLRMAINL;      //Method implemented (In VMInterpreter class).
+            case "CLRTLIST", "clrtlist"->CLRTLIST;      //Method implemented (In VMInterpreter class).
             case "CALL", "call"-> CALL;                 //To be sorted by the VM itself, no explicit method.
             case "FUNCDEC", "funcdec"-> FUNCDEC;        //Marker opcode, no implementation required.
             case "EOF", "eof"->EOF;                     //Marker opcode, no implementation required.
+
             default->EOF;
         };
         return op;

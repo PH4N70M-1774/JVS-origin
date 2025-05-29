@@ -7,6 +7,7 @@ public class Instruction
 
     public Instruction(String instruction, boolean isWithoutArgs)
     {
+        instruction=instruction.trim();
         if(isWithoutArgs)
         {
             op=Opcode.getOpcodeFor(instruction);
