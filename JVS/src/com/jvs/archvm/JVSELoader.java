@@ -21,7 +21,6 @@ public class JVSELoader
      */
     public static JVSEInstructions load(String filePath)
     {
-        System.out.println("\n\n");
         Map<Integer, Instruction> instructions = new HashMap<>();
         Map<String, Integer> methods = new HashMap<>();
         int lineCount = 1;
