@@ -5,12 +5,18 @@ public class Instruction
     private Opcode op;
     private String args;
     public static final int EMPTYLINE=0; //Used to mark empty lines in the source code.
+    public static final int RETURN=1;    //Used to mark return instructions in the source code.
 
     public Instruction(int id)
     {
         if(id==EMPTYLINE)
         {
             op=Opcode.EMPTYLINE;
+            args="";
+        }
+        else if(id==RETURN)
+        {
+            op=Opcode.RETURN;
             args="";
         }
         else

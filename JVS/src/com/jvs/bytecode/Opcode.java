@@ -20,7 +20,7 @@ public enum Opcode
     CMPE,
     CMPNE,
     AND, OR, XOR, NOT, EQ, NEQ,
-    ASSERT, GOTO, CALL,
+    ASSERT, GOTO, CALL, RETURN,
     PRINT,
     FUNCDEC,
     EMPTYLINE, //Used to mark empty lines in the source code.
@@ -65,6 +65,7 @@ public enum Opcode
             case "CLRMAINL", "clrmainl"->CLRMAINL;      //Method implemented (In VMInterpreter class).
             case "CLRTLIST", "clrtlist"->CLRTLIST;      //Method implemented (In VMInterpreter class).
             case "CALL", "call"-> CALL;                 //To be sorted by the VM itself, no explicit method.
+            case "RETURN", "return"->RETURN;            //To be sorted by the VM itself, no explicit method.
             case "FUNCDEC", "funcdec"-> FUNCDEC;        //Marker opcode, no implementation required.
             case "EOF", "eof"->EOF;                     //Marker opcode, no implementation required.
             case "EMPTYLINE", "emptyline"-> EMPTYLINE;  //Marker opcode, no implementation required.

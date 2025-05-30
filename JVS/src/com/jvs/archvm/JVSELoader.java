@@ -52,6 +52,10 @@ public class JVSELoader
                 {
                     instructions.put(lineCount, new Instruction(Instruction.EMPTYLINE));
                 }
+                else if(line.equals("RETURN")||line.equals("return"))
+                {
+                    instructions.put(lineCount, new Instruction(Instruction.RETURN));
+                }
                 else
                 {
                     instructions.put(lineCount, new Instruction(line, false));

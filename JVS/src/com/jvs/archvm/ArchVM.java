@@ -4,7 +4,7 @@ import com.jvs.bytecode.*;
 
 public class ArchVM
 {
-    private int line;
+    private int line, returnLine;
     private VarManager main, temp;
     private VMInterpreter vmi;
     private Context ct;
@@ -13,6 +13,7 @@ public class ArchVM
     public ArchVM(String file)
     {
         line=0;
+        returnLine=0;
         main=new VarManager();
         temp=new VarManager();
         vmi=new VMInterpreter(main, temp);
@@ -76,6 +77,7 @@ public class ArchVM
             case GOTO->line=vmi.gotu(args);
             case CALL->registerCall(args, instructions.getMethodIndex(args));
             case PRINT->vmi.print(args);
+            case RETURN->returnToLine();
             default->doNothing();
         }
     }
@@ -87,7 +89,13 @@ public class ArchVM
 
     private void registerCall(String name, int newLine)
     {
+        returnLine=line;
         line=newLine;
         ct.addCall(name, newLine);
+    }
+
+    private void returnToLine()
+    {
+        line=returnLine+1;
     }
 }
