@@ -4,6 +4,20 @@ public class Instruction
 {
     private Opcode op;
     private String args;
+    public static final int EMPTYLINE=0; //Used to mark empty lines in the source code.
+
+    public Instruction(int id)
+    {
+        if(id==EMPTYLINE)
+        {
+            op=Opcode.EMPTYLINE;
+            args="";
+        }
+        else
+        {
+            throw new IllegalArgumentException("Invalid instruction ID: " + id);
+        }
+    }
 
     public Instruction(String instruction, boolean isWithoutArgs)
     {

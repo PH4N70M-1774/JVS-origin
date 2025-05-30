@@ -23,6 +23,7 @@ public enum Opcode
     ASSERT, GOTO, CALL,
     PRINT,
     FUNCDEC,
+    EMPTYLINE, //Used to mark empty lines in the source code.
     EOF;
 
     public static Opcode getOpcodeFor(String s)
@@ -66,7 +67,7 @@ public enum Opcode
             case "CALL", "call"-> CALL;                 //To be sorted by the VM itself, no explicit method.
             case "FUNCDEC", "funcdec"-> FUNCDEC;        //Marker opcode, no implementation required.
             case "EOF", "eof"->EOF;                     //Marker opcode, no implementation required.
-
+            case "EMPTYLINE", "emptyline"-> EMPTYLINE;  //Marker opcode, no implementation required.
             default->EOF;
         };
         return op;

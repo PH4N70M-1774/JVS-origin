@@ -48,6 +48,10 @@ public class JVSELoader
                 {
                     instructions.put(lineCount, new Instruction("eof", true));
                 }
+                else if(line.equals(""))
+                {
+                    instructions.put(lineCount, new Instruction(Instruction.EMPTYLINE));
+                }
                 else
                 {
                     instructions.put(lineCount, new Instruction(line, false));
