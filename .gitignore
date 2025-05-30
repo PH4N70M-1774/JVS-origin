@@ -1,4 +1,5 @@
 JVS/bin/
 *.jvse
+*.jvs
 Test1.java
 JVS-Log.txt
