@@ -4,4 +4,4 @@ JVS/bin/
 Test1.java
 NativeTest.java
 Test.java
-JVS-Log.txt
+*.txt
