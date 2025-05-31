@@ -15,6 +15,7 @@ public class ArchVM
     private Map<String, Integer> returnLines;
     private Map<String, String> methodLinks;
     private String currentMethod, previousMethod;
+    private boolean isFirstCall;
 
     public ArchVM(String file)
     {
@@ -27,9 +28,10 @@ public class ArchVM
         returnLines=new HashMap<>();
         methodLinks=new HashMap<>();
         currentMethod="<main>";
-        previousMethod="";
+        previousMethod="<main>";
         context.addCall(currentMethod, line+1);
         methodLinks.put(currentMethod, previousMethod);
+        isFirstCall=true;
     }
 
     public void start()
@@ -89,6 +91,7 @@ public class ArchVM
             case CALL->registerCall(args, instructions.getMethodIndex(args));
             case PRINT->vmi.print(args);
             case RETURN->returnToLine();
+            case NATIVE->vmi.handleNative(args);
             default->doNothing();
         }
     }
@@ -107,13 +110,18 @@ public class ArchVM
         previousMethod=currentMethod;
         currentMethod=name;
         methodLinks.put(currentMethod, previousMethod);
+        if(isFirstCall)
+        {
+            returnLines.put("<main>", returnLine);
+            isFirstCall=false;
+        }
     }
 
     private void returnToLine()
     {
-        line=returnLines.get(previousMethod);
         currentMethod=methodLinks.get(currentMethod);
         previousMethod=methodLinks.get(previousMethod);
         context.addReturn(currentMethod, line);
+        line=returnLines.get(previousMethod);
     }
 }

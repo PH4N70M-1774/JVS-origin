@@ -24,6 +24,7 @@ public enum Opcode
     PRINT,
     FUNCDEC,
     EMPTYLINE, //Used to mark empty lines in the source code.
+    NATIVE,
     EOF;
 
     public static Opcode getOpcodeFor(String s)
@@ -64,6 +65,7 @@ public enum Opcode
             case "PRINT", "print"-> PRINT;              //Method implemented (In VMInterpreter class).
             case "CLRMAINL", "clrmainl"->CLRMAINL;      //Method implemented (In VMInterpreter class).
             case "CLRTLIST", "clrtlist"->CLRTLIST;      //Method implemented (In VMInterpreter class).
+            case "NATIVE", "native"->NATIVE;            //Method implemented (In VMInterpreter class).
             case "CALL", "call"-> CALL;                 //To be sorted by the VM itself, no explicit method.
             case "RETURN", "return"->RETURN;            //To be sorted by the VM itself, no explicit method.
             case "FUNCDEC", "funcdec"-> FUNCDEC;        //Marker opcode, no implementation required.

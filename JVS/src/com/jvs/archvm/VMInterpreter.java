@@ -3,6 +3,7 @@ package com.jvs.archvm;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.lang.reflect.Method;
 
 /**
  * Interprets the instructions of the JVS Virtual Machine (ArchVM).<p>
@@ -2270,6 +2271,139 @@ public class VMInterpreter
                 VMError.logvm("Invalid arguments.");
             }
         }
+    }
+
+    public void handleNative(String args)
+    {
+        try
+        {
+            // Split input: e.g. NativeTest.java test2(v) y
+            String[] parts = args.trim().split("\\s+", 3);
+            String classFile = parts[0];  // NativeTest.java
+            String methodAndArgs = parts[1];  // test2(v)
+            String resultVar = parts.length > 2 ? parts[2] : null;
+
+            // Class name without extension
+            String className = classFile.replace(".java", "");
+
+            // Parse method name and argument list
+            int openParen = methodAndArgs.indexOf('(');
+            int closeParen = methodAndArgs.indexOf(')');
+            String methodName = methodAndArgs.substring(0, openParen);
+            String argList = methodAndArgs.substring(openParen + 1, closeParen).trim();
+
+            // Split arguments if present
+            String[] argNames = argList.isEmpty() ? new String[0] : argList.split("\\s*,\\s*");
+
+            Object[] argValues = new Object[argNames.length];
+            Class<?>[] paramTypes = new Class<?>[argNames.length];
+
+            for (int i = 0; i < argNames.length; i++)
+            {
+                String varName = argNames[i];
+                int typeCode = getVariableTypeCode(varName);  // Implement this to get 1,2,3,4
+                paramTypes[i] = mapTypeCodeToClass(typeCode);
+                argValues[i] = getVariableValueBoxed(varName, typeCode);
+            }
+
+            // Load class
+            Class<?> clazz = Class.forName(className);
+
+            // Lookup method with exact signature
+            Method method = clazz.getMethod(methodName, paramTypes);
+
+            // Invoke static method with args
+            Object ret = method.invoke(null, argValues);
+
+            if (method.getReturnType() != void.class && resultVar != null && !resultVar.isEmpty()) {
+                if (ret != null) {
+                    setVariableValue(resultVar, ret);
+                }
+            }
+
+        }
+        catch (Exception e)
+        {
+            System.err.println("Error in handleNative: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // Map your typeCode to Java primitive Class
+    private Class<?> mapTypeCodeToClass(int typeCode)
+    {
+        switch (typeCode)
+        {
+            case 1: return long.class;     // jvs int = Java long
+            case 2: return double.class;   // jvs float/double
+            case 3: return char.class;     // jvs char
+            case 4: return boolean.class;  // jvs boolean
+            default: return Object.class;
+        }
+    }
+
+    // Return boxed value for reflection call based on typeCode
+    private Object getVariableValueBoxed(String varName, int typeCode)
+    {
+        if (varName.startsWith("$"))
+        {
+            switch (typeCode)
+            {
+                case 1: return Long.valueOf(temp.getIntVar(varName));
+                case 2: return Double.valueOf(temp.getFloatVar(varName));
+                case 3: return Character.valueOf(temp.getCharVar(varName));
+                case 4: return Boolean.valueOf(temp.getBoolVar(varName));
+            }
+        }
+        else
+        {
+            switch (typeCode)
+            {
+                case 1: return Long.valueOf(main.getIntVar(varName));
+                case 2: return Double.valueOf(main.getFloatVar(varName));
+                case 3: return Character.valueOf(main.getCharVar(varName));
+                case 4: return Boolean.valueOf(main.getBoolVar(varName));
+            }
+        }
+        return null;
+    }
+
+    // Store returned value to main or temp VarManager, handling type conversion if needed
+    private void setVariableValue(String varName, Object value)
+    {
+        boolean isTemp = varName.startsWith("$");
+        if (value == null) return;
+
+        if (value instanceof Long)
+        {
+            if (isTemp) temp.setVar(varName, (Long) value);
+            else main.setVar(varName, (Long) value);
+        }
+        else if (value instanceof Double)
+        {
+            if (isTemp) temp.setVar(varName, (Double) value);
+            else main.setVar(varName, (Double) value);
+        }
+        else if (value instanceof Character)
+        {
+            if (isTemp) temp.setVar(varName, (Character) value);
+            else main.setVar(varName, (Character) value);
+        }
+        else if (value instanceof Boolean)
+        {
+            if (isTemp) temp.setVar(varName, (Boolean) value);
+            else main.setVar(varName, (Boolean) value);
+        }
+        else
+        {
+            // handle Object or other types if needed
+        }
+    }
+
+    // Dummy placeholder, you must implement this to return your variable's type code (1-4)
+    private int getVariableTypeCode(String varName)
+    {
+        return ((varName.startsWith("$"))?temp.getTypeCode(varName):main.getTypeCode(varName));
     }
 
 

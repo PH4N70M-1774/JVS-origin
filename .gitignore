@@ -2,4 +2,6 @@ JVS/bin/
 *.jvse
 *.jvs
 Test1.java
+NativeTest.java
+Test.java
 JVS-Log.txt
