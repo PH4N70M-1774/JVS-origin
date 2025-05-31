@@ -2,23 +2,34 @@ package com.jvs.archvm;
 
 import com.jvs.bytecode.*;
 
+import java.util.Map;
+import java.util.HashMap;
+
 public class ArchVM
 {
-    private int line, returnLine;
+    private int line;
     private VarManager main, temp;
     private VMInterpreter vmi;
-    private Context ct;
+    private Context context;
     private JVSEInstructions instructions;
+    private Map<String, Integer> returnLines;
+    private Map<String, String> methodLinks;
+    private String currentMethod, previousMethod;
 
     public ArchVM(String file)
     {
         line=0;
-        returnLine=0;
         main=new VarManager();
         temp=new VarManager();
         vmi=new VMInterpreter(main, temp);
-        ct=new Context(file);
+        context=new Context(file);
         instructions=JVSELoader.load(file);
+        returnLines=new HashMap<>();
+        methodLinks=new HashMap<>();
+        currentMethod="<main>";
+        previousMethod="";
+        context.addCall(currentMethod, line+1);
+        methodLinks.put(currentMethod, previousMethod);
     }
 
     public void start()
@@ -89,13 +100,20 @@ public class ArchVM
 
     private void registerCall(String name, int newLine)
     {
-        returnLine=line;
+        int returnLine=line+1;
         line=newLine;
-        ct.addCall(name, newLine);
+        context.addCall(name, newLine);
+        returnLines.put(name, returnLine);
+        previousMethod=currentMethod;
+        currentMethod=name;
+        methodLinks.put(currentMethod, previousMethod);
     }
 
     private void returnToLine()
     {
-        line=returnLine+1;
+        line=returnLines.get(previousMethod);
+        currentMethod=methodLinks.get(currentMethod);
+        previousMethod=methodLinks.get(previousMethod);
+        context.addReturn(currentMethod, line);
     }
 }

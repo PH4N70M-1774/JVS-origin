@@ -92,6 +92,18 @@ public class Context
     }
 
     /**
+     * Adds a return method call to the calls string.
+     *
+     * @param call The name of the method call to add.
+     * @param line The line number where the method call occurred.
+     */
+    public void addReturn(String call, int line)
+    {
+        calls += ((isFirst)?'\n':",\n");
+        calls += "    Returned to method: "+call+", Line: "+line+"";
+    }
+
+    /**
      * Returns the string representation of the calls.
      *
      * @return The calls string.
