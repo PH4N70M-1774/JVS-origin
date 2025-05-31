@@ -4,33 +4,38 @@ import com.jvs.bytecode.*;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 public class ArchVM
 {
-    private int line;
+    private int line, callCount;
     private VarManager main, temp;
     private VMInterpreter vmi;
     private Context context;
     private JVSEInstructions instructions;
     private Map<String, Integer> returnLines;
-    private Map<String, String> methodLinks;
+    private List<String> calls;
     private String currentMethod, previousMethod;
     private boolean isFirstCall;
 
     public ArchVM(String file)
     {
         line=0;
+        callCount=0;
+
         main=new VarManager();
         temp=new VarManager();
         vmi=new VMInterpreter(main, temp);
         context=new Context(file);
         instructions=JVSELoader.load(file);
+
         returnLines=new HashMap<>();
-        methodLinks=new HashMap<>();
+        calls=new ArrayList<>();
+        calls.add("<main>");
         currentMethod="<main>";
-        previousMethod="<main>";
+        previousMethod="";
         context.addCall(currentMethod, line+1);
-        methodLinks.put(currentMethod, previousMethod);
         isFirstCall=true;
     }
 
@@ -105,23 +110,28 @@ public class ArchVM
     {
         int returnLine=line+1;
         line=newLine;
+        calls.add(name);
+        callCount++;
         context.addCall(name, newLine);
-        returnLines.put(name, returnLine);
-        previousMethod=currentMethod;
-        currentMethod=name;
-        methodLinks.put(currentMethod, previousMethod);
+        previousMethod=calls.get(callCount-1);
+        currentMethod=calls.get(callCount);
         if(isFirstCall)
         {
             returnLines.put("<main>", returnLine);
             isFirstCall=false;
         }
+        else
+        {
+            returnLines.put(name, returnLine);
+        }
+
     }
 
     private void returnToLine()
     {
-        currentMethod=methodLinks.get(currentMethod);
-        previousMethod=methodLinks.get(previousMethod);
+        previousMethod=currentMethod;
+        currentMethod=calls.get(callCount-1);
         context.addReturn(currentMethod, line);
-        line=returnLines.get(previousMethod);
+        line=returnLines.get(calls.get(callCount-1));
     }
 }
