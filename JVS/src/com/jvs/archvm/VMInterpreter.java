@@ -1,6 +1,7 @@
 package com.jvs.archvm;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.lang.reflect.Method;
@@ -2271,6 +2272,11 @@ public class VMInterpreter
                 VMError.logvm("Invalid arguments.");
             }
         }
+    }
+
+    public void printTime()
+    {
+        System.out.println(new Date().toString());
     }
 
     public void handleNative(String args)

@@ -94,6 +94,8 @@ public class ArchVM
             case GOTO->line=vmi.gotu(args);
             case CALL->registerCall(args, instructions.getMethodIndex(args));
             case PRINT->vmi.print(args);
+            case PRINT_TIME->vmi.printTime();
+            case PRINT_STACK->printStack();
             case RETURN->returnToLine();
             case NATIVE->vmi.handleNative(args);
             default->doNothing();
@@ -130,5 +132,10 @@ public class ArchVM
         currentMethod=calls.get(callCount-1);
         context.addReturn(currentMethod, line);
         line=returnLines.get(calls.get(callCount-1));
+    }
+
+    private void printStack()
+    {
+        System.out.println(context);
     }
 }

@@ -52,6 +52,14 @@ public class JVSELoader
                 {
                     instructions.put(lineCount, new Instruction(Instruction.EMPTYLINE));
                 }
+                else if(line.equals("PRINTSTACK")||line.equals("printStack"))
+                {
+                    instructions.put(lineCount, new Instruction(Instruction.PRINT_STACK));
+                }
+                else if(line.equals("PRINTTIME")||line.equals("printTime"))
+                {
+                    instructions.put(lineCount, new Instruction(Instruction.PRINT_TIME));
+                }
                 else if(line.equals("RETURN")||line.equals("return"))
                 {
                     instructions.put(lineCount, new Instruction(Instruction.RETURN));

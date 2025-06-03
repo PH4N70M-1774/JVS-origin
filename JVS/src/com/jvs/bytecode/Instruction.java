@@ -6,6 +6,8 @@ public class Instruction
     private String args;
     public static final int EMPTYLINE=0; //Used to mark empty lines in the source code.
     public static final int RETURN=1;    //Used to mark return instructions in the source code.
+    public static final int PRINT_STACK=2;       //Used to mark the end of the file in the source code.
+    public static final int PRINT_TIME=3;        //Used to mark the end of the file in the source code.
 
     public Instruction(int id)
     {
@@ -17,6 +19,16 @@ public class Instruction
         else if(id==RETURN)
         {
             op=Opcode.RETURN;
+            args="";
+        }
+        else if(id==PRINT_STACK)
+        {
+            op=Opcode.PRINT_STACK;
+            args="";
+        }
+        else if(id==PRINT_TIME)
+        {
+            op=Opcode.PRINT_TIME;
             args="";
         }
         else
