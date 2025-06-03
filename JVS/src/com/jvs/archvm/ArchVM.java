@@ -16,7 +16,7 @@ public class ArchVM
     private JVSEInstructions instructions;
     private Map<String, Integer> returnLines;
     private List<String> calls;
-    private String currentMethod;
+    private String currentMethod, previousMethod;
     private boolean isFirstCall;
 
     public ArchVM(String file)
@@ -34,6 +34,7 @@ public class ArchVM
         calls=new ArrayList<>();
         calls.add("<main>");
         currentMethod="<main>";
+        previousMethod="<VM_INTERNAL>";
         context.addCall(currentMethod, line+1);
         isFirstCall=true;
     }
@@ -111,6 +112,7 @@ public class ArchVM
     {
         int returnLine=line+1;
         line=newLine;
+        previousMethod=currentMethod;
         calls.add(name);
         callCount++;
         context.addCall(name, newLine);
@@ -129,8 +131,10 @@ public class ArchVM
 
     private void returnToLine()
     {
-        currentMethod=calls.get(callCount-1);
-        context.addReturn(currentMethod, line);
+        String temp=currentMethod;
+        currentMethod=previousMethod;
+        previousMethod=temp;
+        context.addReturn(currentMethod, returnLines.get(calls.get(callCount-1)));
         line=returnLines.get(calls.get(callCount-1));
     }
 
