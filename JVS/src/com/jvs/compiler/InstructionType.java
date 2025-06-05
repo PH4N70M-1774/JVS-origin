@@ -1,6 +1,6 @@
 package com.jvs.compiler;
 
-public class AST
+public enum InstructionType
 {
-    
+
 }

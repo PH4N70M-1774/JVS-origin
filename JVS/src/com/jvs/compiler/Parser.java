@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface Parser
 {
-    public AST parse(List<Token> tokens);
+    public ParsedInstruction parse(List<Token> tokens);
 }
