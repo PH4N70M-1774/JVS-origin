@@ -1,4 +1,4 @@
-package com.jvs.compiler;
+package com.jvs.compiler.interfaces;
 
 public interface CompilerModel
 {

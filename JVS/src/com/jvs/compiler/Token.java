@@ -36,4 +36,10 @@ public class Token
     {
         return value;
     }
+
+    @Override
+    public String toString()
+    {
+        return "[Type: "+type+((value=="")?"]":"Value: "+value+']');
+    }
 }
