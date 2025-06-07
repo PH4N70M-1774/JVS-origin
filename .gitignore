@@ -7,6 +7,7 @@ Test.java
 *.txt
 *.bat
 Arch.java
-.cspell
+.cspell/
 JVS/.cspell
-.vscode
+.vscode/
+.cspell/custom-dictionary-workspace.txt
