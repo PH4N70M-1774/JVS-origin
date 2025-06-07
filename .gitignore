@@ -7,3 +7,6 @@ Test.java
 *.txt
 *.bat
 Arch.java
+.cspell
+JVS/.cspell
+.vscode
