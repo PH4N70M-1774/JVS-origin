@@ -17,7 +17,6 @@ public class ArchVM
     private Map<String, Integer> returnLines;
     private List<String> calls;
     private String currentMethod, previousMethod;
-    private boolean isFirstCall;
 
     public ArchVM(String file)
     {
@@ -36,7 +35,6 @@ public class ArchVM
         currentMethod="<main>";
         previousMethod="<VM_INTERNAL>";
         context.addCall(currentMethod, line+1);
-        isFirstCall=true;
     }
 
     public void start()
@@ -117,16 +115,7 @@ public class ArchVM
         callCount++;
         context.addCall(name, newLine);
         currentMethod=calls.get(callCount);
-        if(isFirstCall)
-        {
-            returnLines.put("<main>", returnLine);
-            isFirstCall=false;
-        }
-        else
-        {
-            returnLines.put(name, returnLine);
-        }
-
+        returnLines.put(name, returnLine);
     }
 
     private void returnToLine()
@@ -134,8 +123,8 @@ public class ArchVM
         String temp=currentMethod;
         currentMethod=previousMethod;
         previousMethod=temp;
-        context.addReturn(currentMethod, returnLines.get(calls.get(callCount-1)));
-        line=returnLines.get(calls.get(callCount-1));
+        context.addReturn(currentMethod, returnLines.get(calls.get(callCount)));
+        line=returnLines.get(calls.get(callCount));
     }
 
     private void printStack()
