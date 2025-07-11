@@ -1,5 +1,7 @@
 # Custom Dictionary Words
 azzert
+BRANCHF
+BRANCHT
 cmpe
 cmpgt
 cmpgte
@@ -11,10 +13,20 @@ emptyline
 fmod
 fmult
 fpow
+GLOAD
 gotu
+GSTORE
+ICMPE
+ICMPG
+ICMPGE
+ICMPL
+ICMPLE
+ICMPNE
 imod
 imult
 ipow
 logvm
+PRINTSP
 printstack
 printtime
+velox
