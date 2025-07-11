@@ -145,11 +145,8 @@ public class VeloxVM
                         throw new VeloxVMError("Stack Underflow Error", e);
                     }
                 }
-                case CALL->{
-                    ip+=2;
-                }
                 default->{
-
+                    ip+=Opcode.get(opcode).getNumOperands();
                 }
             }
 
