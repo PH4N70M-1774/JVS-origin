@@ -2,6 +2,9 @@ package com.jvs.velox;
 
 import static com.jvs.velox.Opcode.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class VeloxVM
 {
     private static final int DEFAULT_STACK_SIZE=1024;
@@ -15,6 +18,9 @@ public class VeloxVM
     private int[] local;
 
     private boolean trace;
+    private boolean traceLater;
+
+    private List<String> disassembledInstructions;
 
     private Tracer tracer;
 
@@ -31,13 +37,20 @@ public class VeloxVM
         local=new int[DEFAULT_MEMORY_SIZE];
 
         this.trace=false;
+        this.traceLater=false;
+        disassembledInstructions=new ArrayList<>();
 
         tracer=new Tracer(instructions, stack);
     }
 
-    public void trace(boolean trace)
+    public void trace(boolean trace, boolean traceLater)
     {
         this.trace=trace;
+        this.traceLater=traceLater;
+        if (traceLater)
+        {
+            this.disassembledInstructions=new ArrayList<>();
+        }
     }
 
     public void exec() throws VeloxVMError
@@ -159,17 +172,41 @@ public class VeloxVM
                 }
             }
 
-            if(trace)
+            if(trace && traceLater)
             {
-                tracer.disassemble(ip2, opcode, sp);
+                disassembledInstructions.add(tracer.disassemble(ip2, opcode, sp));
+            }
+            else if(trace)
+            {
+                tracer.disassembleAndPrint(ip2, opcode, sp);
             }
         }
-        if(trace && localLength!=0)
+
+        if(trace && traceLater)
+        {
+            System.out.println();
+            System.out.println("====================TRACE=====================");
+            for(String s: disassembledInstructions)
+            {
+                System.out.println(s);
+            }
+            System.out.println("==============================================");
+            if(localLength!=0)
+            {
+                System.out.println("====================MEMORY====================");
+                for(int i=0;i<localLength;i++)
+                {
+                    System.out.printf("%04d: %d", i, local[i]);
+                }
+            }
+            System.out.println("\n==============================================");
+        }
+        if(trace && !traceLater && localLength!=0)
         {
             System.out.println("\nMemory:");
             for(int i=0;i<localLength;i++)
             {
-                System.out.println(tracer.getIndex(tracer.getDigits(i), i)+": "+local[i]);
+                System.out.printf("%04d: %d", i, local[i]);
             }
         }
     }
