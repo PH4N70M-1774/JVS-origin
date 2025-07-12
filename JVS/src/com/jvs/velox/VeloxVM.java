@@ -171,17 +171,25 @@ public class VeloxVM
                     ip+=Opcode.get(opcode).getNumOperands();
                 }
             }
-
-            if(trace && traceLater)
-            {
-                disassembledInstructions.add(tracer.disassemble(ip2, opcode, sp));
-            }
-            else if(trace)
-            {
-                tracer.disassembleAndPrint(ip2, opcode, sp);
-            }
+            tracing(opcode);
         }
+        tracePrint();
+    }
 
+    private void tracing(int opcode)
+    {
+        if(trace && traceLater)
+        {
+            disassembledInstructions.add(tracer.disassemble(ip2, opcode, sp));
+        }
+        else if(trace)
+        {
+            tracer.disassembleAndPrint(ip2, opcode, sp);
+        }
+    }
+
+    private void tracePrint()
+    {
         if(trace && traceLater)
         {
             System.out.println();
