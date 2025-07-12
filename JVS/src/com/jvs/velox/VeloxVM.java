@@ -18,6 +18,8 @@ public class VeloxVM
 
     private boolean trace;
 
+    private Tracer tracer;
+
     public VeloxVM(int[] instructions, int start)
     {
         ip=start;
@@ -31,6 +33,8 @@ public class VeloxVM
         local=new int[DEFAULT_MEMORY_SIZE];
 
         this.trace=false;
+
+        tracer=new Tracer(instructions, stack);
     }
 
     public void trace(boolean trace)
@@ -51,10 +55,17 @@ public class VeloxVM
             {
                 case EXIT->{}
                 case ICONST->{
-                    int value=instructions[ip];
-                    ip++;
-                    sp++;
-                    stack[sp]=value;
+                    try
+                    {
+                        int value=instructions[ip];
+                        ip++;
+                        sp++;
+                        stack[sp]=value;
+                    }
+                    catch(ArrayIndexOutOfBoundsException e)
+                    {
+                        throw new VeloxVMError("Stack Overflow Error", e);
+                    }
                 }
                 case STORE->{
                     int value=stack[sp--];
@@ -152,91 +163,16 @@ public class VeloxVM
 
             if(trace)
             {
-                disassemble(opcode);
+                tracer.disassemble(ip2, opcode, sp);
             }
         }
         if(trace && localLength!=0)
         {
-            System.out.println("Memory:");
+            System.out.println("\nMemory:");
             for(int i=0;i<localLength;i++)
             {
-                System.out.println(getIndex(getDigits(i), i)+":  "+local[i]);
+                System.out.println(tracer.getIndex(tracer.getDigits(i), i)+": "+local[i]);
             }
         }
-    }
-
-    private void disassemble(int opcode)
-    {
-        String name=Opcode.get(opcode).getName();
-        int numOperands=Opcode.get(opcode).getNumOperands();
-        String instruction="";
-
-        instruction+=getIndex(getDigits(ip2), ip2)+": ";
-        instruction+=getName(name);
-
-        if(numOperands==1)
-        {
-            instruction+=instructions[ip2+1];
-        }
-        else if(numOperands==2)
-        {
-            instruction+=instructions[ip2+1];
-            instruction+=", ";
-            instruction+=instructions[ip2+2];
-        }
-        System.out.printf("%-35s", instruction);
-        printStack();
-    }
-
-    private void printStack()
-    {
-        List<Integer> stackString=new ArrayList<>();
-        for(int i=0;i<=sp;i++)
-        {
-            stackString.add(stack[i]);
-        }
-        System.out.println(stackString);
-    }
-
-    private int getDigits(int number)
-    {
-        int digits=0;
-        while(number!=0)
-        {
-            digits++;
-            number/=10;
-        }
-        return digits;
-    }
-
-    private String getIndex(int digits, int index)
-    {
-        if(digits==0)
-        {
-            return "0000";
-        }
-        else if(digits==1)
-        {
-            return "000"+index;
-        }
-        else if(digits==2)
-        {
-            return "00"+index;
-        }
-        else if(digits==3)
-        {
-            return "0"+index;
-        }
-        return ""+index;
-    }
-
-    private String getName(String name)
-    {
-        String s="";
-        for(int i=0;i<10;i++)
-        {
-            s+=((i<name.length())?name.charAt(i):" ");
-        }
-        return s;
     }
 }
