@@ -28,6 +28,7 @@ public class Opcode
     public static final short GSTORE=23;
     public static final short GLOAD=24;
     public static final short PRINTSP=25;
+    public static final short JUMPNEXT=26;
 
     private static Instruction instructions[]={
         new Instruction("EXIT", 0),
@@ -55,7 +56,8 @@ public class Opcode
         new Instruction("POP", 0),
         new Instruction("GSTORE", 1),
         new Instruction("GLOAD", 1),
-        new Instruction("PRINTSP", 1)
+        new Instruction("PRINTSP", 1),
+        new Instruction("JUMPNEXT", 0)
     };
 
     public static Instruction get(int opcode)

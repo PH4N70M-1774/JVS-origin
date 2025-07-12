@@ -28,6 +28,7 @@ ICONST
 imod
 imult
 ipow
+JUMPNEXT
 jvelox
 jveloxr
 jvsb
