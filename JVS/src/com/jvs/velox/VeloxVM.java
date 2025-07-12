@@ -1,8 +1,6 @@
 package com.jvs.velox;
 
 import static com.jvs.velox.Opcode.*;
-import java.util.List;
-import java.util.ArrayList;
 
 public class VeloxVM
 {
