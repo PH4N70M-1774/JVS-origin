@@ -193,21 +193,21 @@ public class VeloxVM
         if(trace && traceLater)
         {
             System.out.println();
-            System.out.println("====================TRACE=====================");
+            System.out.println("==================================================TRACE===================================================");
             for(String s: disassembledInstructions)
             {
                 System.out.println(s);
             }
-            System.out.println("==============================================");
+            System.out.println("==========================================================================================================");
             if(localLength!=0)
             {
-                System.out.println("====================MEMORY====================");
+                System.out.println("==================================================MEMORY==================================================");
                 for(int i=0;i<localLength;i++)
                 {
                     System.out.printf("%04d: %d", i, local[i]);
                 }
             }
-            System.out.println("\n==============================================");
+            System.out.println("\n==========================================================================================================");
         }
         if(trace && !traceLater && localLength!=0)
         {
