@@ -7,11 +7,13 @@ public class Tracer
 {
     private int[] instructions;
     private int[] stack;
+    private FunctionMeta[] metadata;
 
-    public Tracer(int[] instructions, int[] stack)
+    public Tracer(int[] instructions, int[] stack, FunctionMeta[] metadata)
     {
         this.instructions=instructions;
         this.stack=stack;
+        this.metadata=metadata;
     }
 
     public String disassemble(int ip, int opcode, int sp)
@@ -22,7 +24,14 @@ public class Tracer
 
         if(numOperands==1)
         {
-            instruction+=instructions[ip+1];
+            if(name.equals("CALL"))
+            {
+                instruction+=metadata[instructions[ip+1]].getName();
+            }
+            else
+            {
+                instruction+=instructions[ip+1];
+            }
         }
         else if(numOperands==2)
         {
@@ -30,7 +39,7 @@ public class Tracer
             instruction+=", ";
             instruction+=instructions[ip+2];
         }
-        return String.format("%-35s%s", instruction, getStackString(sp));
+        return String.format("%-45s%s", instruction, getStackString(sp));
     }
 
     public void disassembleAndPrint(int ip, int opcode, int sp)

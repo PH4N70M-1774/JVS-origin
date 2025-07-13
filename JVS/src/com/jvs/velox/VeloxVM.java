@@ -44,7 +44,7 @@ public class VeloxVM
         this.traceLater=false;
         disassembledInstructions=new ArrayList<>();
 
-        tracer=new Tracer(instructions, stack);
+        tracer=new Tracer(instructions, stack, metadata);
         this.metadata=metadata;
     }
 
