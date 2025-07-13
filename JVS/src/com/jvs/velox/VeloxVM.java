@@ -10,12 +10,11 @@ public class VeloxVM
     private static final int DEFAULT_STACK_SIZE=1024;
     private static final int DEFAULT_MEMORY_SIZE=1024;
 
-    private int ip, ip2, sp, localLength, globalLength, poolLength;
+    private int ip, ip2, sp, globalLength, poolLength;
 
     private int[] instructions;
 
     private int[] stack;
-    private int[] local;
     private int[] global;
     private String[] pool;
 
@@ -31,14 +30,12 @@ public class VeloxVM
     public VeloxVM(int[] instructions, String[] pool, int poolLength, FunctionMeta[] metadata)
     {
         sp=-1;
-        localLength=-1;
         globalLength=-1;
         this.poolLength=poolLength;
 
         this.instructions=instructions;
 
         stack=new int[DEFAULT_STACK_SIZE];
-        local=new int[DEFAULT_MEMORY_SIZE];
         global=new int[DEFAULT_MEMORY_SIZE];
 
         this.pool=pool;
@@ -95,12 +92,11 @@ public class VeloxVM
                 case STORE->{
                     int value=stack[sp--];
                     int index=instructions[ip++];
-                    local[index]=value;
-                    localLength++;
+                    ctx.locals[index]=value;
                 }
                 case LOAD->{
                     int index=instructions[ip++];
-                    stack[++sp]=local[index];
+                    stack[++sp]=ctx.locals[index];
                 }
                 case IADD->{
                     try
@@ -264,6 +260,24 @@ public class VeloxVM
                     int line=instructions[ip++];
                     ip=((stack[sp--]==0)?line:ip);
                 }
+                case CALL->{
+                    // expects all args on stack
+					int funcIndex = instructions[ip++];			// index of target function
+					int nArgs = metadata[funcIndex].getNumberOfArgs();	// how many args got pushed
+					ctx = new Context(ctx,ip,metadata[funcIndex]);
+					// copy args into new context
+					int firstArg = sp-nArgs+1;
+					for (int i=0; i<nArgs; i++)
+                    {
+						ctx.locals[i] = stack[firstArg+i];
+					}
+					sp -= nArgs;
+					ip = metadata[funcIndex].getAddress();
+                }
+                case RET->{
+                    ip = ctx.getReturnIP();
+					ctx = ctx.getInvokingContext();
+                }
                 case POP->sp--;
                 case GSTORE->{
                     int value=stack[sp--];
@@ -313,18 +327,9 @@ public class VeloxVM
                 System.out.println(s);
             }
             System.out.println("==========================================================================================================");
-            if(localLength!=-1||globalLength!=-1||poolLength!=0)
+            if(globalLength!=-1||poolLength!=0)
             {
                 System.out.println("\n==================================================MEMORY==================================================");
-            }
-            if(localLength!=-1)
-            {
-                System.out.println("==================================================LOCAL===================================================");
-                for(int i=0;i<=localLength;i++)
-                {
-                    System.out.printf("%04d: %d\n", i, local[i]);
-                }
-                System.out.println("==========================================================================================================");
             }
             if(globalLength!=-1)
             {
@@ -344,17 +349,17 @@ public class VeloxVM
                 }
                 System.out.println("\n==========================================================================================================");
             }
-            if(localLength!=0||globalLength!=0||poolLength!=0)
+            if(globalLength!=0||poolLength!=0)
             {
                 System.out.println("==========================================================================================================");
             }
         }
-        if(trace && !traceLater && localLength!=-1)
+        if(trace && !traceLater && globalLength!=-1)
         {
             System.out.println("\nMemory:");
-            for(int i=0;i<=localLength;i++)
+            for(int i=0;i<=globalLength;i++)
             {
-                System.out.printf("%04d: %d", i, local[i]);
+                System.out.printf("%04d: %d", i, global[i]);
             }
         }
     }

@@ -51,7 +51,7 @@ public class Opcode
         new Instruction("BRANCH", 1),
         new Instruction("BRANCHT", 1),
         new Instruction("BRANCHF", 1),
-        new Instruction("CALL", 2),
+        new Instruction("CALL", 1),
         new Instruction("RET", 0),
         new Instruction("POP", 0),
         new Instruction("GSTORE", 1),
