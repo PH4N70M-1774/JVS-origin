@@ -162,7 +162,7 @@ public class VeloxVM
                     try
                     {
                         int value=stack[sp--];
-                        System.out.println(value);
+                        System.out.print(value);
                     }
                     catch(ArrayIndexOutOfBoundsException e)
                     {
@@ -173,7 +173,7 @@ public class VeloxVM
                     int elements=instructions[ip++];
                     for(int i=0;i<elements;i++)
                     {
-                        System.out.println(((char)stack[sp--]));
+                        System.out.print(((char)stack[sp--]));
                     }
                 }
                 case ICMPE->{
@@ -291,7 +291,7 @@ public class VeloxVM
                 }
                 case PRINTSP->{
                     int index=instructions[ip++];
-                    System.out.println(pool[index]);
+                    System.out.print(pool[index]);
 
                 }
                 case JUMPNEXT->System.out.println();
