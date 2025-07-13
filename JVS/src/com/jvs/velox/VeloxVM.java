@@ -25,14 +25,14 @@ public class VeloxVM
     private List<String> disassembledInstructions;
 
     private Tracer tracer;
+    private Context ctx;
+    private FunctionMeta[] metadata;
 
-    public VeloxVM(int[] instructions, int start, String[] pool, int poolLength)
+    public VeloxVM(int[] instructions, String[] pool, int poolLength, FunctionMeta[] metadata)
     {
-        ip=start;
-        ip2=ip;
         sp=-1;
-        localLength=0;
-        globalLength=0;
+        localLength=-1;
+        globalLength=-1;
         this.poolLength=poolLength;
 
         this.instructions=instructions;
@@ -48,6 +48,7 @@ public class VeloxVM
         disassembledInstructions=new ArrayList<>();
 
         tracer=new Tracer(instructions, stack);
+        this.metadata=metadata;
     }
 
     public void trace(boolean trace, boolean traceLater)
@@ -60,7 +61,15 @@ public class VeloxVM
         }
     }
 
-    public void exec() throws VeloxVMError
+    public void exec(int startIP) throws VeloxVMError
+    {
+        ip = startIP;
+        ip2=ip;
+		ctx = new Context(null,0,metadata[0]); // simulate a call to main()
+		cpu();
+    }
+
+    public void cpu() throws VeloxVMError
     {
         int opcode=instructions[ip];
         while(ip<instructions.length && opcode!=EXIT)
@@ -75,10 +84,8 @@ public class VeloxVM
                 case ICONST->{
                     try
                     {
-                        int value=instructions[ip];
-                        ip++;
-                        sp++;
-                        stack[sp]=value;
+                        int value=instructions[ip++];
+                        stack[++sp]=value;
                     }
                     catch(ArrayIndexOutOfBoundsException e)
                     {
@@ -87,24 +94,20 @@ public class VeloxVM
                 }
                 case STORE->{
                     int value=stack[sp--];
-                    int index=instructions[ip];
-                    ip++;
+                    int index=instructions[ip++];
                     local[index]=value;
                     localLength++;
                 }
                 case LOAD->{
-                    int index=instructions[ip];
-                    ip++;
-                    sp++;
-                    stack[sp]=local[index];
+                    int index=instructions[ip++];
+                    stack[++sp]=local[index];
                 }
                 case IADD->{
                     try
                     {
                         int b=stack[sp--];
                         int a=stack[sp--];
-                        sp++;
-                        stack[sp]=(a+b);
+                        stack[++sp]=(a+b);
                     }
                     catch(ArrayIndexOutOfBoundsException e)
                     {
@@ -116,8 +119,7 @@ public class VeloxVM
                     {
                         int b=stack[sp--];
                         int a=stack[sp--];
-                        sp++;
-                        stack[sp]=(a-b);
+                        stack[++sp]=(a-b);
                     }
                     catch(ArrayIndexOutOfBoundsException e)
                     {
@@ -129,8 +131,7 @@ public class VeloxVM
                     {
                         int b=stack[sp--];
                         int a=stack[sp--];
-                        sp++;
-                        stack[sp]=(a*b);
+                        stack[++sp]=(a*b);
                     }
                     catch(ArrayIndexOutOfBoundsException e)
                     {
@@ -142,8 +143,7 @@ public class VeloxVM
                     {
                         int b=stack[sp--];
                         int a=stack[sp--];
-                        sp++;
-                        stack[sp]=(a/b);
+                        stack[++sp]=(a/b);
                     }
                     catch(ArrayIndexOutOfBoundsException e)
                     {
@@ -155,8 +155,7 @@ public class VeloxVM
                     {
                         int b=stack[sp--];
                         int a=stack[sp--];
-                        sp++;
-                        stack[sp]=(a%b);
+                        stack[++sp]=(a%b);
                     }
                     catch(ArrayIndexOutOfBoundsException e)
                     {
@@ -167,7 +166,7 @@ public class VeloxVM
                     try
                     {
                         int value=stack[sp--];
-                        System.out.print(value);
+                        System.out.println(value);
                     }
                     catch(ArrayIndexOutOfBoundsException e)
                     {
@@ -175,11 +174,10 @@ public class VeloxVM
                     }
                 }
                 case PRINTSTR->{
-                    int elements=instructions[ip];
-                    ip++;
+                    int elements=instructions[ip++];
                     for(int i=0;i<elements;i++)
                     {
-                        System.out.print(((char)stack[sp--]));
+                        System.out.println(((char)stack[sp--]));
                     }
                 }
                 case ICMPE->{
@@ -187,8 +185,7 @@ public class VeloxVM
                     {
                         int b=stack[sp--];
                         int a=stack[sp--];
-                        sp++;
-                        stack[sp]=((a==b)?1: 0);
+                        stack[++sp]=((a==b)?1: 0);
                     }
                     catch(ArrayIndexOutOfBoundsException e)
                     {
@@ -200,8 +197,7 @@ public class VeloxVM
                     {
                         int b=stack[sp--];
                         int a=stack[sp--];
-                        sp++;
-                        stack[sp]=((a<b)?1: 0);
+                        stack[++sp]=((a<b)?1: 0);
                     }
                     catch(ArrayIndexOutOfBoundsException e)
                     {
@@ -213,8 +209,7 @@ public class VeloxVM
                     {
                         int b=stack[sp--];
                         int a=stack[sp--];
-                        sp++;
-                        stack[sp]=((a<=b)?1: 0);
+                        stack[++sp]=((a<=b)?1: 0);
                     }
                     catch(ArrayIndexOutOfBoundsException e)
                     {
@@ -226,8 +221,7 @@ public class VeloxVM
                     {
                         int b=stack[sp--];
                         int a=stack[sp--];
-                        sp++;
-                        stack[sp]=((a>b)?1: 0);
+                        stack[++sp]=((a>b)?1: 0);
                     }
                     catch(ArrayIndexOutOfBoundsException e)
                     {
@@ -239,8 +233,7 @@ public class VeloxVM
                     {
                         int b=stack[sp--];
                         int a=stack[sp--];
-                        sp++;
-                        stack[sp]=((a>=b)?1: 0);
+                        stack[++sp]=((a>=b)?1: 0);
                     }
                     catch(ArrayIndexOutOfBoundsException e)
                     {
@@ -252,8 +245,7 @@ public class VeloxVM
                     {
                         int b=stack[sp--];
                         int a=stack[sp--];
-                        sp++;
-                        stack[sp]=((a!=b)?1: 0);
+                        stack[++sp]=((a!=b)?1: 0);
                     }
                     catch(ArrayIndexOutOfBoundsException e)
                     {
@@ -261,38 +253,31 @@ public class VeloxVM
                     }
                 }
                 case BRANCH->{
-                    int line=instructions[ip];
-                    ip++;
+                    int line=instructions[ip++];
                     ip=line;
                 }
                 case BRANCHT->{
-                    int line=instructions[ip];
-                    ip++;
+                    int line=instructions[ip++];
                     ip=((stack[sp--]==1)?line:ip);
                 }
                 case BRANCHF->{
-                    int line=instructions[ip];
-                    ip++;
+                    int line=instructions[ip++];
                     ip=((stack[sp--]==0)?line:ip);
                 }
                 case POP->sp--;
                 case GSTORE->{
                     int value=stack[sp--];
-                    int index=instructions[ip];
-                    ip++;
+                    int index=instructions[ip++];
                     global[index]=value;
                     globalLength++;
                 }
                 case GLOAD->{
-                    int index=instructions[ip];
-                    ip++;
-                    sp++;
-                    stack[sp]=global[index];
+                    int index=instructions[ip++];
+                    stack[++sp]=global[index];
                 }
                 case PRINTSP->{
-                    int index=instructions[ip];
-                    System.out.print(pool[index]);
-                    ip++;
+                    int index=instructions[ip++];
+                    System.out.println(pool[index]);
 
                 }
                 case JUMPNEXT->System.out.println();
@@ -328,20 +313,20 @@ public class VeloxVM
                 System.out.println(s);
             }
             System.out.println("==========================================================================================================");
-            if(localLength!=0||globalLength!=0||poolLength!=0)
+            if(localLength!=-1||globalLength!=-1||poolLength!=0)
             {
                 System.out.println("\n==================================================MEMORY==================================================");
             }
-            if(localLength!=0)
+            if(localLength!=-1)
             {
                 System.out.println("==================================================LOCAL===================================================");
-                for(int i=0;i<localLength;i++)
+                for(int i=0;i<=localLength;i++)
                 {
                     System.out.printf("%04d: %d\n", i, local[i]);
                 }
                 System.out.println("==========================================================================================================");
             }
-            if(globalLength!=0)
+            if(globalLength!=-1)
             {
                 System.out.println("==================================================GLOBAL==================================================");
                 for(int i=0;i<=globalLength;i++)
@@ -364,10 +349,10 @@ public class VeloxVM
                 System.out.println("==========================================================================================================");
             }
         }
-        if(trace && !traceLater && localLength!=0)
+        if(trace && !traceLater && localLength!=-1)
         {
             System.out.println("\nMemory:");
-            for(int i=0;i<localLength;i++)
+            for(int i=0;i<=localLength;i++)
             {
                 System.out.printf("%04d: %d", i, local[i]);
             }
