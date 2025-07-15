@@ -1,18 +1,15 @@
 package com.jvs.velox;
 
-public class VeloxVMError extends Exception
-{
+public class VeloxVMError extends Exception {
     private String msg;
 
-    public VeloxVMError(String msg, Exception cause)
-    {
+    public VeloxVMError(String msg, Exception cause) {
         super(msg, cause);
-        this.msg=msg;
+        this.msg = msg;
     }
 
     @Override
-    public String toString()
-    {
-        return "\n|Error in VeloxVM: "+msg;
+    public String toString() {
+        return "\n|Error in VeloxVM: " + msg;
     }
 }

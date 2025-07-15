@@ -56,8 +56,9 @@ public class VarManager {
 
     /**
      * Adds a variable of a given type with default value.
-     * @param type  Variable type ("int", "float", "char", "boolean").
-     * @param name  Variable name.
+     *
+     * @param type Variable type ("int", "float", "char", "boolean").
+     * @param name Variable name.
      */
     public void addEmpty(String type, String name) {
         switch (type) {
@@ -70,7 +71,9 @@ public class VarManager {
     }
 
     /**
-     * Adds a variable with a given value. Supports Integer, Float, Character, Boolean.
+     * Adds a variable with a given value. Supports Integer, Float, Character,
+     * Boolean.
+     *
      * @param name  Variable name.
      * @param value Variable value.
      * @param <T>   Variable type.
@@ -91,6 +94,7 @@ public class VarManager {
 
     /**
      * Sets the value of an existing variable.
+     *
      * @param name  Variable name.
      * @param value New value.
      * @param <T>   Value type.
@@ -118,11 +122,11 @@ public class VarManager {
     /**
      * Returns the type code for a given variable name.
      * Type codes:
-     *   1 = int
-     *   2 = float
-     *   3 = char
-     *   4 = boolean
-     *   0 = variable not found
+     * 1 = int
+     * 2 = float
+     * 3 = char
+     * 4 = boolean
+     * 0 = variable not found
      *
      * @param name Variable name
      * @return int representing the variable type code
@@ -143,6 +147,7 @@ public class VarManager {
 
     /**
      * Retrieves the int value of a variable.
+     *
      * @param name Variable name.
      * @return Variable value or 0 if not found or wrong type.
      */
@@ -156,6 +161,7 @@ public class VarManager {
 
     /**
      * Retrieves the float value of a variable.
+     *
      * @param name Variable name.
      * @return Variable value or 0.0 if not found or wrong type.
      */
@@ -169,6 +175,7 @@ public class VarManager {
 
     /**
      * Retrieves the char value of a variable.
+     *
      * @param name Variable name.
      * @return Variable value or '\0' if not found or wrong type.
      */
@@ -182,6 +189,7 @@ public class VarManager {
 
     /**
      * Retrieves the boolean value of a variable.
+     *
      * @param name Variable name.
      * @return Variable value or false if not found or wrong type.
      */
@@ -195,6 +203,7 @@ public class VarManager {
 
     /**
      * Checks if a variable exists.
+     *
      * @param name Variable name.
      * @return true if variable exists, false otherwise.
      */

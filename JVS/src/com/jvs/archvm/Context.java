@@ -2,10 +2,10 @@ package com.jvs.archvm;
 
 /**
  * The Context class is used to keep track of method calls.
- * It stores a string representation of the calls made, with the most recent call listed last.
+ * It stores a string representation of the calls made, with the most recent
+ * call listed last.
  */
-public class Context
-{
+public class Context {
     /**
      * A string that stores the method calls.
      */
@@ -20,10 +20,9 @@ public class Context
      * Constructs a new Context object and initializes the calls string.
      * It initializes the calls string.
      */
-    public Context()
-    {
-        isFirst=true;
-        calls = "File: <STDIO>\n"+
+    public Context() {
+        isFirst = true;
+        calls = "File: <STDIO>\n" +
                 "Method calls (Most recent call last):";
     }
 
@@ -33,11 +32,10 @@ public class Context
      *
      * @param fileName The name of the file. (<STDIO> used if null or empty.)
      */
-    public Context(String fileName)
-    {
-        isFirst=true;
-        fileName=((fileName==null||fileName=="")?"<STDIO>":fileName);
-        calls = "File: "+fileName+'\n'+
+    public Context(String fileName) {
+        isFirst = true;
+        fileName = ((fileName == null || fileName == "") ? "<STDIO>" : fileName);
+        calls = "File: " + fileName + '\n' +
                 "Method calls (Most recent call last):";
     }
 
@@ -45,29 +43,29 @@ public class Context
      * Constructs a new Context object and initializes the calls string
      * with the method name specified.
      *
-     * @param methodName The name of the starting method. (main() used if null or empty..)
-     * @param line The line number of method.
+     * @param methodName The name of the starting method. (main() used if null or
+     *                   empty..)
+     * @param line       The line number of method.
      */
-    public Context(String methodName, int line)
-    {
+    public Context(String methodName, int line) {
         this();
         addCall(methodName, line);
-        isFirst=false;
+        isFirst = false;
     }
 
     /**
      * Constructs a new Context object and initiates the calls string
      * with the file name & method name specified.
      *
-     * @param fileName The name of the file. (<STDIO> used if null or empty.)
-     * @param methodName The name of the starting method. (main() used if null or empty.)
-     * @param line The line number of method.
+     * @param fileName   The name of the file. (<STDIO> used if null or empty.)
+     * @param methodName The name of the starting method. (main() used if null or
+     *                   empty.)
+     * @param line       The line number of method.
      */
-    public Context(String fileName, String methodName, int line)
-    {
+    public Context(String fileName, String methodName, int line) {
         this(fileName);
         addCall(methodName, line);
-        isFirst=false;
+        isFirst = false;
     }
 
     /**
@@ -76,18 +74,16 @@ public class Context
      * @param call The name of the method call to add.
      * @param line The line number where the method call occurred.
      */
-    public void addCall(String call, int line)
-    {
-        calls += ((isFirst)?'\n':",\n");
-        calls += "    Method call: "+call+", Line: "+line+"";
+    public void addCall(String call, int line) {
+        calls += ((isFirst) ? '\n' : ",\n");
+        calls += "    Method call: " + call + ", Line: " + line + "";
     }
 
     /**
      * Clears the calls string, resetting it to its initial state.
      */
-    public void clearCalls()
-    {
-        calls = "Method calls (Most recent call last):\n"+
+    public void clearCalls() {
+        calls = "Method calls (Most recent call last):\n" +
                 "    File: <STDIO>, Line: 1";
     }
 
@@ -97,10 +93,9 @@ public class Context
      * @param call The name of the method call to add.
      * @param line The line number where the method call occurred.
      */
-    public void addReturn(String call, int line)
-    {
-        calls += ((isFirst)?'\n':",\n");
-        calls += "    Returned to method: "+call+", Line: "+line+"";
+    public void addReturn(String call, int line) {
+        calls += ((isFirst) ? '\n' : ",\n");
+        calls += "    Returned to method: " + call + ", Line: " + line + "";
     }
 
     /**
@@ -109,8 +104,7 @@ public class Context
      * @return The calls string.
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return calls;
     }
 }
