@@ -320,12 +320,12 @@ public jvs HelloWorld {
 
     public{
         _init() {
-            print "Creating HelloWorld";
+            print("Creating HelloWorld");
         }
 
         static func main() {
             String name = "JVS";
-            print "Hello, ", name;
+            print("Hello, ", name);
         }
     }
 }
