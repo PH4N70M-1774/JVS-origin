@@ -27,6 +27,7 @@ ICMPNE
 ICONST
 imod
 imult
+INOT
 ipow
 JUMPNEXT
 jvelox

@@ -247,6 +247,41 @@ public class VeloxVM {
 
                 }
                 case JUMPNEXT -> System.out.println();
+                case AND -> {
+                    try {
+                        int b = stack[sp--];
+                        int a = stack[sp--];
+                        stack[++sp] = (a == 1 && b == 1) ? 1 : 0;
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        throw new VeloxVMError("Stack Underflow Error", e);
+                    }
+                }
+                case OR -> {
+                    try {
+                        int b = stack[sp--];
+                        int a = stack[sp--];
+                        stack[++sp] = (a == 1 || b == 1) ? 1 : 0;
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        throw new VeloxVMError("Stack Underflow Error", e);
+                    }
+                }
+                case NOT -> {
+                    try {
+                        int a = stack[sp--];
+                        stack[++sp] = (a == 1) ? 0 : 1;
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        throw new VeloxVMError("Stack Underflow Error", e);
+                    }
+                }
+                case XOR -> {
+                    try {
+                        int b = stack[sp--];
+                        int a = stack[sp--];
+                        stack[++sp] = (a == 1 && b == 0) || (a == 0 && b == 1) ? 1 : 0;
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        throw new VeloxVMError("Stack Underflow Error", e);
+                    }
+                }
                 default -> {
                     ip += Opcode.get(opcode).getNumOperands();
                 }
