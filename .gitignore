@@ -1,4 +1,5 @@
 JVS/bin/
+*.jvelox
 *.jvse
 *.jvs
 Test1.java
