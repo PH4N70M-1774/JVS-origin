@@ -2,15 +2,8 @@ package com.jvs.velox;
 
 import java.io.FileInputStream;
 
-public class VeloxReader {
-
-    private String fileName;
-
-    public VeloxReader(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public VeloxInstructions load() throws VeloxVMError {
+public class VeloxLoader {
+    public static VeloxInstructions load(String fileName) throws VeloxVMError {
 
         if (!(fileName.endsWith(".jvelox"))) {
             throw new VeloxVMError("Invalid file format. Only \".jvelox\" files allowed.", null);
