@@ -19,6 +19,7 @@ public class VeloxVM {
 
     private boolean trace;
     private boolean traceLater;
+    private boolean cursorAtLineStart;
 
     private List<String> disassembledInstructions;
 
@@ -40,6 +41,7 @@ public class VeloxVM {
 
         this.trace = false;
         this.traceLater = false;
+        this.cursorAtLineStart = true;
         disassembledInstructions = new ArrayList<>();
 
         tracer = new Tracer(instructions, stack, metadata);
@@ -137,6 +139,7 @@ public class VeloxVM {
                     try {
                         int value = stack[sp--];
                         System.out.print(value);
+                        cursorAtLineStart = false;
                     } catch (ArrayIndexOutOfBoundsException e) {
                         throw new VeloxVMError("Stack Underflow Error", e);
                     }
@@ -146,6 +149,7 @@ public class VeloxVM {
                     for (int i = 0; i < elements; i++) {
                         System.out.print(((char) stack[sp--]));
                     }
+                    cursorAtLineStart = false;
                 }
                 case ICMPE -> {
                     try {
@@ -244,9 +248,13 @@ public class VeloxVM {
                 case PRINTSP -> {
                     int index = instructions[ip++];
                     System.out.print(pool[index]);
+                    cursorAtLineStart = false;
 
                 }
-                case JUMPNEXT -> System.out.println();
+                case JUMPNEXT -> {
+                    System.out.println();
+                    cursorAtLineStart = true;
+                }
                 case AND -> {
                     try {
                         int b = stack[sp--];
@@ -295,6 +303,10 @@ public class VeloxVM {
         if (trace && traceLater) {
             disassembledInstructions.add(tracer.disassemble(ip2, opcode, sp));
         } else if (trace) {
+            if (!cursorAtLineStart) {
+                System.out.println();
+                cursorAtLineStart = true;
+            }
             tracer.disassembleAndPrint(ip2, opcode, sp);
         }
     }
