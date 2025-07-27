@@ -54,7 +54,6 @@ public class VeloxLoader {
 
             return new VeloxInstructions(instructions, pool, poolLength, metadata, start);
         } catch (Exception e) {
-            e.printStackTrace();
             throw new VeloxVMError(e.getMessage(), e);
         }
     }
