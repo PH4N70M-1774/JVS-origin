@@ -351,7 +351,7 @@ public class VeloxVM {
         if (trace && !traceLater && globalLength != -1) {
             System.out.println("\nMemory:");
             for (int i = 0; i <= globalLength; i++) {
-                System.out.printf("%04d: %d", i, global[i]);
+                System.out.printf("%04d: %d\n", i, global[i]);
             }
         }
     }
