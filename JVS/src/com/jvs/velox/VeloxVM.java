@@ -65,15 +65,15 @@ public class VeloxVM {
 
     public void cpu() throws VeloxVMError {
         int opcode = instructions[ip];
-        while (ip < instructions.length && opcode != EXIT) {
+        while (ip < instructions.length && opcode != exit) {
             opcode = instructions[ip];
             ip2 = ip;
             ip++;
 
             switch (opcode) {
-                case EXIT -> {
+                case exit -> {
                 }
-                case ICONST -> {
+                case iconst -> {
                     try {
                         int value = instructions[ip++];
                         stack[++sp] = value;
@@ -81,16 +81,16 @@ public class VeloxVM {
                         throw new VeloxVMError("Stack Overflow Error", e);
                     }
                 }
-                case STORE -> {
+                case store -> {
                     int value = stack[sp--];
                     int index = instructions[ip++];
                     ctx.locals[index] = value;
                 }
-                case LOAD -> {
+                case load -> {
                     int index = instructions[ip++];
                     stack[++sp] = ctx.locals[index];
                 }
-                case IADD -> {
+                case iadd -> {
                     try {
                         int b = stack[sp--];
                         int a = stack[sp--];
@@ -99,7 +99,7 @@ public class VeloxVM {
                         throw new VeloxVMError("Stack Underflow Error", e);
                     }
                 }
-                case ISUB -> {
+                case isub -> {
                     try {
                         int b = stack[sp--];
                         int a = stack[sp--];
@@ -108,7 +108,7 @@ public class VeloxVM {
                         throw new VeloxVMError("Stack Underflow Error", e);
                     }
                 }
-                case IMUL -> {
+                case imul -> {
                     try {
                         int b = stack[sp--];
                         int a = stack[sp--];
@@ -117,7 +117,7 @@ public class VeloxVM {
                         throw new VeloxVMError("Stack Underflow Error", e);
                     }
                 }
-                case IDIV -> {
+                case idiv -> {
                     try {
                         int b = stack[sp--];
                         int a = stack[sp--];
@@ -126,7 +126,7 @@ public class VeloxVM {
                         throw new VeloxVMError("Stack Underflow Error", e);
                     }
                 }
-                case IMOD -> {
+                case imod -> {
                     try {
                         int b = stack[sp--];
                         int a = stack[sp--];
@@ -135,7 +135,7 @@ public class VeloxVM {
                         throw new VeloxVMError("Stack Underflow Error", e);
                     }
                 }
-                case PRINT -> {
+                case print -> {
                     try {
                         int value = stack[sp--];
                         System.out.print(value);
@@ -144,14 +144,14 @@ public class VeloxVM {
                         throw new VeloxVMError("Stack Underflow Error", e);
                     }
                 }
-                case PRINTSTR -> {
+                case printstr -> {
                     int elements = instructions[ip++];
                     for (int i = 0; i < elements; i++) {
                         System.out.print(((char) stack[sp--]));
                     }
                     cursorAtLineStart = false;
                 }
-                case ICMPE -> {
+                case icmpe -> {
                     try {
                         int b = stack[sp--];
                         int a = stack[sp--];
@@ -160,7 +160,7 @@ public class VeloxVM {
                         throw new VeloxVMError("Stack Underflow Error", e);
                     }
                 }
-                case ICMPL -> {
+                case icmpl -> {
                     try {
                         int b = stack[sp--];
                         int a = stack[sp--];
@@ -169,7 +169,7 @@ public class VeloxVM {
                         throw new VeloxVMError("Stack Underflow Error", e);
                     }
                 }
-                case ICMPLE -> {
+                case icmple -> {
                     try {
                         int b = stack[sp--];
                         int a = stack[sp--];
@@ -178,7 +178,7 @@ public class VeloxVM {
                         throw new VeloxVMError("Stack Underflow Error", e);
                     }
                 }
-                case ICMPG -> {
+                case icmpg -> {
                     try {
                         int b = stack[sp--];
                         int a = stack[sp--];
@@ -187,7 +187,7 @@ public class VeloxVM {
                         throw new VeloxVMError("Stack Underflow Error", e);
                     }
                 }
-                case ICMPGE -> {
+                case icmpge -> {
                     try {
                         int b = stack[sp--];
                         int a = stack[sp--];
@@ -196,7 +196,7 @@ public class VeloxVM {
                         throw new VeloxVMError("Stack Underflow Error", e);
                     }
                 }
-                case ICMPNE -> {
+                case icmpne -> {
                     try {
                         int b = stack[sp--];
                         int a = stack[sp--];
@@ -205,19 +205,19 @@ public class VeloxVM {
                         throw new VeloxVMError("Stack Underflow Error", e);
                     }
                 }
-                case BRANCH -> {
+                case branch -> {
                     int line = instructions[ip++];
                     ip = line;
                 }
-                case BRANCHT -> {
+                case brancht -> {
                     int line = instructions[ip++];
                     ip = ((stack[sp--] == 1) ? line : ip);
                 }
-                case BRANCHF -> {
+                case branchf -> {
                     int line = instructions[ip++];
                     ip = ((stack[sp--] == 0) ? line : ip);
                 }
-                case CALL -> {
+                case invoke -> {
                     // expects all args on stack
                     int funcIndex = instructions[ip++]; // index of target function
                     int nArgs = metadata[funcIndex].getNumberOfArgs(); // how many args got pushed
@@ -230,32 +230,32 @@ public class VeloxVM {
                     sp -= nArgs;
                     ip = metadata[funcIndex].getAddress();
                 }
-                case RET -> {
+                case ret -> {
                     ip = ctx.getReturnIP();
                     ctx = ctx.getInvokingContext();
                 }
-                case POP -> sp--;
-                case GSTORE -> {
+                case pop -> sp--;
+                case gstore -> {
                     int value = stack[sp--];
                     int index = instructions[ip++];
                     global[index] = value;
                     globalLength++;
                 }
-                case GLOAD -> {
+                case gload -> {
                     int index = instructions[ip++];
                     stack[++sp] = global[index];
                 }
-                case PRINTSP -> {
+                case printsp -> {
                     int index = instructions[ip++];
                     System.out.print(pool[index]);
                     cursorAtLineStart = false;
 
                 }
-                case JUMPNEXT -> {
+                case jumpnext -> {
                     System.out.println();
                     cursorAtLineStart = true;
                 }
-                case AND -> {
+                case and -> {
                     try {
                         int b = stack[sp--];
                         int a = stack[sp--];
@@ -264,7 +264,7 @@ public class VeloxVM {
                         throw new VeloxVMError("Stack Underflow Error", e);
                     }
                 }
-                case OR -> {
+                case or -> {
                     try {
                         int b = stack[sp--];
                         int a = stack[sp--];
@@ -273,7 +273,7 @@ public class VeloxVM {
                         throw new VeloxVMError("Stack Underflow Error", e);
                     }
                 }
-                case NOT -> {
+                case not -> {
                     try {
                         int a = stack[sp--];
                         stack[++sp] = (a == 1) ? 0 : 1;
@@ -281,7 +281,7 @@ public class VeloxVM {
                         throw new VeloxVMError("Stack Underflow Error", e);
                     }
                 }
-                case XOR -> {
+                case xor -> {
                     try {
                         int b = stack[sp--];
                         int a = stack[sp--];

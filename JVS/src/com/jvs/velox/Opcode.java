@@ -1,70 +1,70 @@
 package com.jvs.velox;
 
 public class Opcode {
-    public static final short EXIT = 0;
-    public static final short ICONST = 1;
-    public static final short STORE = 2;
-    public static final short LOAD = 3;
-    public static final short IADD = 4;
-    public static final short ISUB = 5;
-    public static final short IMUL = 6;
-    public static final short IDIV = 7;
-    public static final short IMOD = 8;
-    public static final short PRINT = 9;
-    public static final short PRINTSTR = 10;
-    public static final short ICMPE = 11;
-    public static final short ICMPL = 12;
-    public static final short ICMPLE = 13;
-    public static final short ICMPG = 14;
-    public static final short ICMPGE = 15;
-    public static final short ICMPNE = 16;
-    public static final short BRANCH = 17;
-    public static final short BRANCHT = 18;
-    public static final short BRANCHF = 19;
-    public static final short CALL = 20;
-    public static final short RET = 21;
-    public static final short POP = 22;
-    public static final short GSTORE = 23;
-    public static final short GLOAD = 24;
-    public static final short PRINTSP = 25;
-    public static final short JUMPNEXT = 26;
-    public static final short AND = 27;
-    public static final short OR = 28;
-    public static final short NOT = 29;
-    public static final short XOR = 30;
+    public static final short exit = 0;
+    public static final short iconst = 1;
+    public static final short store = 2;
+    public static final short load = 3;
+    public static final short iadd = 4;
+    public static final short isub = 5;
+    public static final short imul = 6;
+    public static final short idiv = 7;
+    public static final short imod = 8;
+    public static final short print = 9;
+    public static final short printstr = 10;
+    public static final short icmpe = 11;
+    public static final short icmpl = 12;
+    public static final short icmple = 13;
+    public static final short icmpg = 14;
+    public static final short icmpge = 15;
+    public static final short icmpne = 16;
+    public static final short branch = 17;
+    public static final short brancht = 18;
+    public static final short branchf = 19;
+    public static final short invoke = 20;
+    public static final short ret = 21;
+    public static final short pop = 22;
+    public static final short gstore = 23;
+    public static final short gload = 24;
+    public static final short printsp = 25;
+    public static final short jumpnext = 26;
+    public static final short and = 27;
+    public static final short or = 28;
+    public static final short not = 29;
+    public static final short xor = 30;
 
     private static Instruction instructions[] = {
-            new Instruction("EXIT", 0),
-            new Instruction("ICONST", 1),
-            new Instruction("STORE", 1),
-            new Instruction("LOAD", 1),
-            new Instruction("IADD", 0),
-            new Instruction("ISUB", 0),
-            new Instruction("IMUL", 0),
-            new Instruction("IDIV", 0),
-            new Instruction("IMOD", 0),
-            new Instruction("PRINT", 0),
-            new Instruction("PRINTSTR", 1),
-            new Instruction("ICMPE", 0),
-            new Instruction("ICMPL", 0),
-            new Instruction("ICMPLE", 0),
-            new Instruction("ICMPG", 0),
-            new Instruction("ICMPGE", 0),
-            new Instruction("ICMPNE", 0),
-            new Instruction("BRANCH", 1),
-            new Instruction("BRANCHT", 1),
-            new Instruction("BRANCHF", 1),
-            new Instruction("CALL", 1),
-            new Instruction("RET", 0),
-            new Instruction("POP", 0),
-            new Instruction("GSTORE", 1),
-            new Instruction("GLOAD", 1),
-            new Instruction("PRINTSP", 1),
-            new Instruction("JUMPNEXT", 0),
-            new Instruction("AND", 0),
-            new Instruction("OR", 0),
-            new Instruction("NOT", 0),
-            new Instruction("XOR", 0)
+            new Instruction("exit", 0),
+            new Instruction("iconst", 1),
+            new Instruction("store", 1),
+            new Instruction("load", 1),
+            new Instruction("iadd", 0),
+            new Instruction("isub", 0),
+            new Instruction("imul", 0),
+            new Instruction("idiv", 0),
+            new Instruction("imod", 0),
+            new Instruction("print", 0),
+            new Instruction("printstr", 1),
+            new Instruction("icmpe", 0),
+            new Instruction("icmpl", 0),
+            new Instruction("icmple", 0),
+            new Instruction("icmpg", 0),
+            new Instruction("icmpge", 0),
+            new Instruction("icmpne", 0),
+            new Instruction("branch", 1),
+            new Instruction("brancht", 1),
+            new Instruction("branchf", 1),
+            new Instruction("invoke", 1),
+            new Instruction("ret", 0),
+            new Instruction("pop", 0),
+            new Instruction("gstore", 1),
+            new Instruction("gload", 1),
+            new Instruction("printsp", 1),
+            new Instruction("jumpnext", 0),
+            new Instruction("and", 0),
+            new Instruction("or", 0),
+            new Instruction("not", 0),
+            new Instruction("xor", 0)
     };
 
     public static Instruction get(int opcode) {
