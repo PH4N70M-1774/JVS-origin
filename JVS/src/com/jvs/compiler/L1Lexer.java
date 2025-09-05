@@ -12,7 +12,6 @@ public class L1Lexer {
     private int column = 1; // current column
 
     private int tokenStartColumn = 1;
-    private int tokenStartPos = 0;
     private int tokenEndColumn = 1; // column where token ends
 
     public L1Lexer(String source, String fileName) {
@@ -27,7 +26,6 @@ public class L1Lexer {
             skipWhitespace();
 
             // Start of a new token
-            tokenStartPos = current; // index in source
             tokenStartColumn = column; // column BEFORE consuming first char
 
             char ch = advance(); // advance increments column
