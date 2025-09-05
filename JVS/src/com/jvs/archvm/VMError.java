@@ -1,9 +1,7 @@
 package com.jvs.archvm;
 
 public class VMError {
-    public static void log(String file, int line, String message, String stmt, int pos, int end, boolean isRed) {
-        String red = "\u001B[31m";
-        String reset = "\u001B[0m";
+    public static void log(String file, int line, String message, String stmt, int pos, int end) {
 
         String e1 = "\n\n|" + ((file.endsWith(".jvse")) ? file : file + ".jvse") + ": Error at line " + line + " - "
                 + message + "\n|";
@@ -20,10 +18,10 @@ public class VMError {
             }
         }
 
-        System.out.println(((isRed) ? red : "") + e1);
+        System.out.println(e1);
         System.out.println(e2);
         System.out.println(e3);
-        System.out.println(e4 + '\n' + reset);
+        System.out.println(e4 + '\n');
     }
 
     public static void logvm(String msg) {
