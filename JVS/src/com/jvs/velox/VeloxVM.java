@@ -9,12 +9,12 @@ public class VeloxVM {
     private static final int DEFAULT_STACK_SIZE = 1024;
     private static final int DEFAULT_MEMORY_SIZE = 1024;
 
-    private int ip, ip2, sp, globalLength, poolLength;
+    private int ip, ip2, sp, dsp, globalLength, poolLength;
 
     private int[] instructions;
 
-    private int[] stack;
-    private int[] global;
+    private long[] stack;
+    private long[] global;
     private String[] pool;
 
     private boolean trace;
@@ -27,6 +27,10 @@ public class VeloxVM {
     private Context ctx;
     private FunctionMeta[] metadata;
 
+    public VeloxVM(VeloxInstructions vi) {
+        this(vi.getInstructions(), vi.getPool(), vi.getPoolLength(), vi.getMetadata());
+    }
+
     public VeloxVM(int[] instructions, String[] pool, int poolLength, FunctionMeta[] metadata) {
         sp = -1;
         globalLength = -1;
@@ -34,8 +38,8 @@ public class VeloxVM {
 
         this.instructions = instructions;
 
-        stack = new int[DEFAULT_STACK_SIZE];
-        global = new int[DEFAULT_MEMORY_SIZE];
+        stack = new long[DEFAULT_STACK_SIZE];
+        global = new long[DEFAULT_MEMORY_SIZE];
 
         this.pool = pool;
 
@@ -43,12 +47,11 @@ public class VeloxVM {
         this.traceLater = false;
         this.cursorAtLineStart = true;
         disassembledInstructions = new ArrayList<>();
-
-        tracer = new Tracer(instructions, stack, metadata);
         this.metadata = metadata;
     }
 
-    public void trace(boolean trace, boolean traceLater) {
+    public void trace(boolean trace, boolean traceLater, boolean printStack) {
+        tracer = new Tracer(instructions, stack, metadata, printStack);
         this.trace = trace;
         this.traceLater = traceLater;
         if (traceLater) {
@@ -82,7 +85,7 @@ public class VeloxVM {
                     }
                 }
                 case store -> {
-                    int value = stack[sp--];
+                    long value = stack[sp--];
                     int index = instructions[ip++];
                     ctx.locals[index] = value;
                 }
@@ -92,8 +95,8 @@ public class VeloxVM {
                 }
                 case iadd -> {
                     try {
-                        int b = stack[sp--];
-                        int a = stack[sp--];
+                        long b = stack[sp--];
+                        long a = stack[sp--];
                         stack[++sp] = (a + b);
                     } catch (ArrayIndexOutOfBoundsException e) {
                         throw new VeloxVMError("Stack Underflow Error", e);
@@ -101,8 +104,8 @@ public class VeloxVM {
                 }
                 case isub -> {
                     try {
-                        int b = stack[sp--];
-                        int a = stack[sp--];
+                        long b = stack[sp--];
+                        long a = stack[sp--];
                         stack[++sp] = (a - b);
                     } catch (ArrayIndexOutOfBoundsException e) {
                         throw new VeloxVMError("Stack Underflow Error", e);
@@ -110,8 +113,8 @@ public class VeloxVM {
                 }
                 case imul -> {
                     try {
-                        int b = stack[sp--];
-                        int a = stack[sp--];
+                        long b = stack[sp--];
+                        long a = stack[sp--];
                         stack[++sp] = (a * b);
                     } catch (ArrayIndexOutOfBoundsException e) {
                         throw new VeloxVMError("Stack Underflow Error", e);
@@ -119,8 +122,8 @@ public class VeloxVM {
                 }
                 case idiv -> {
                     try {
-                        int b = stack[sp--];
-                        int a = stack[sp--];
+                        long b = stack[sp--];
+                        long a = stack[sp--];
                         stack[++sp] = (a / b);
                     } catch (ArrayIndexOutOfBoundsException e) {
                         throw new VeloxVMError("Stack Underflow Error", e);
@@ -128,8 +131,8 @@ public class VeloxVM {
                 }
                 case imod -> {
                     try {
-                        int b = stack[sp--];
-                        int a = stack[sp--];
+                        long b = stack[sp--];
+                        long a = stack[sp--];
                         stack[++sp] = (a % b);
                     } catch (ArrayIndexOutOfBoundsException e) {
                         throw new VeloxVMError("Stack Underflow Error", e);
@@ -137,7 +140,7 @@ public class VeloxVM {
                 }
                 case print -> {
                     try {
-                        int value = stack[sp--];
+                        long value = stack[sp--];
                         System.out.print(value);
                         cursorAtLineStart = false;
                     } catch (ArrayIndexOutOfBoundsException e) {
@@ -153,8 +156,8 @@ public class VeloxVM {
                 }
                 case icmpe -> {
                     try {
-                        int b = stack[sp--];
-                        int a = stack[sp--];
+                        long b = stack[sp--];
+                        long a = stack[sp--];
                         stack[++sp] = ((a == b) ? 1 : 0);
                     } catch (ArrayIndexOutOfBoundsException e) {
                         throw new VeloxVMError("Stack Underflow Error", e);
@@ -162,8 +165,8 @@ public class VeloxVM {
                 }
                 case icmpl -> {
                     try {
-                        int b = stack[sp--];
-                        int a = stack[sp--];
+                        long b = stack[sp--];
+                        long a = stack[sp--];
                         stack[++sp] = ((a < b) ? 1 : 0);
                     } catch (ArrayIndexOutOfBoundsException e) {
                         throw new VeloxVMError("Stack Underflow Error", e);
@@ -171,8 +174,8 @@ public class VeloxVM {
                 }
                 case icmple -> {
                     try {
-                        int b = stack[sp--];
-                        int a = stack[sp--];
+                        long b = stack[sp--];
+                        long a = stack[sp--];
                         stack[++sp] = ((a <= b) ? 1 : 0);
                     } catch (ArrayIndexOutOfBoundsException e) {
                         throw new VeloxVMError("Stack Underflow Error", e);
@@ -180,8 +183,8 @@ public class VeloxVM {
                 }
                 case icmpg -> {
                     try {
-                        int b = stack[sp--];
-                        int a = stack[sp--];
+                        long b = stack[sp--];
+                        long a = stack[sp--];
                         stack[++sp] = ((a > b) ? 1 : 0);
                     } catch (ArrayIndexOutOfBoundsException e) {
                         throw new VeloxVMError("Stack Underflow Error", e);
@@ -189,8 +192,8 @@ public class VeloxVM {
                 }
                 case icmpge -> {
                     try {
-                        int b = stack[sp--];
-                        int a = stack[sp--];
+                        long b = stack[sp--];
+                        long a = stack[sp--];
                         stack[++sp] = ((a >= b) ? 1 : 0);
                     } catch (ArrayIndexOutOfBoundsException e) {
                         throw new VeloxVMError("Stack Underflow Error", e);
@@ -198,8 +201,8 @@ public class VeloxVM {
                 }
                 case icmpne -> {
                     try {
-                        int b = stack[sp--];
-                        int a = stack[sp--];
+                        long b = stack[sp--];
+                        long a = stack[sp--];
                         stack[++sp] = ((a != b) ? 1 : 0);
                     } catch (ArrayIndexOutOfBoundsException e) {
                         throw new VeloxVMError("Stack Underflow Error", e);
@@ -236,7 +239,7 @@ public class VeloxVM {
                 }
                 case pop -> sp--;
                 case gstore -> {
-                    int value = stack[sp--];
+                    long value = stack[sp--];
                     int index = instructions[ip++];
                     global[index] = value;
                     globalLength++;
@@ -257,8 +260,8 @@ public class VeloxVM {
                 }
                 case and -> {
                     try {
-                        int b = stack[sp--];
-                        int a = stack[sp--];
+                        long b = stack[sp--];
+                        long a = stack[sp--];
                         stack[++sp] = (a == 1 && b == 1) ? 1 : 0;
                     } catch (ArrayIndexOutOfBoundsException e) {
                         throw new VeloxVMError("Stack Underflow Error", e);
@@ -266,8 +269,8 @@ public class VeloxVM {
                 }
                 case or -> {
                     try {
-                        int b = stack[sp--];
-                        int a = stack[sp--];
+                        long b = stack[sp--];
+                        long a = stack[sp--];
                         stack[++sp] = (a == 1 || b == 1) ? 1 : 0;
                     } catch (ArrayIndexOutOfBoundsException e) {
                         throw new VeloxVMError("Stack Underflow Error", e);
@@ -275,7 +278,7 @@ public class VeloxVM {
                 }
                 case not -> {
                     try {
-                        int a = stack[sp--];
+                        long a = stack[sp--];
                         stack[++sp] = (a == 1) ? 0 : 1;
                     } catch (ArrayIndexOutOfBoundsException e) {
                         throw new VeloxVMError("Stack Underflow Error", e);
@@ -283,12 +286,20 @@ public class VeloxVM {
                 }
                 case xor -> {
                     try {
-                        int b = stack[sp--];
-                        int a = stack[sp--];
+                        long b = stack[sp--];
+                        long a = stack[sp--];
                         stack[++sp] = (a == 1 && b == 0) || (a == 0 && b == 1) ? 1 : 0;
                     } catch (ArrayIndexOutOfBoundsException e) {
                         throw new VeloxVMError("Stack Underflow Error", e);
                     }
+                }
+                case iconst8 -> {
+                    byte[] longBytes = new byte[8];
+                    for (int i = 0; i < 8; i++) {
+                        longBytes[i] = (byte) instructions[ip++];
+                    }
+                    stack[++sp] = Utilities.bytesToLong(longBytes);
+
                 }
                 default -> {
                     ip += Opcode.get(opcode).getNumOperands();
@@ -301,13 +312,13 @@ public class VeloxVM {
 
     private void tracing(int opcode) {
         if (trace && traceLater) {
-            disassembledInstructions.add(tracer.disassemble(ip2, opcode, sp));
+            disassembledInstructions.add(tracer.disassemble(ip2, opcode, sp, dsp));
         } else if (trace) {
             if (!cursorAtLineStart) {
                 System.out.println();
                 cursorAtLineStart = true;
             }
-            tracer.disassembleAndPrint(ip2, opcode, sp);
+            tracer.disassembleAndPrint(ip2, opcode, sp, dsp);
         }
     }
 

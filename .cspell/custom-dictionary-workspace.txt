@@ -11,9 +11,14 @@ cmpne
 decr
 elif
 emptyline
+fcmpe
+fcmpge
+fcmple
+fcmpne
 fmod
 fmult
 fpow
+fprint
 GLOAD
 gotu
 GSTORE

@@ -32,6 +32,7 @@ public class Opcode {
     public static final short or = 28;
     public static final short not = 29;
     public static final short xor = 30;
+    public static final short iconst8 = 31;
 
     private static Instruction instructions[] = {
             new Instruction("exit", 0),
@@ -64,7 +65,8 @@ public class Opcode {
             new Instruction("and", 0),
             new Instruction("or", 0),
             new Instruction("not", 0),
-            new Instruction("xor", 0)
+            new Instruction("xor", 0),
+            new Instruction("iconst8", 8),
     };
 
     public static Instruction get(int opcode) {
