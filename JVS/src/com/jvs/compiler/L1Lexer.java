@@ -3,7 +3,7 @@ package com.jvs.compiler;
 import java.util.ArrayList;
 import java.util.List;
 
-public class L1Lexer {
+public class L1Lexer implements Lexer{
 
     private final String source;
     private final String fileName;
@@ -14,9 +14,13 @@ public class L1Lexer {
     private int tokenStartColumn = 1;
     private int tokenEndColumn = 1; // column where token ends
 
-    public L1Lexer(String source, String fileName) {
+    private L1Lexer(String source, String fileName) {
         this.source = source;
         this.fileName = fileName;
+    }
+
+    public static L1Lexer getLexer(String source, String fileName) {
+        return new L1Lexer(source, fileName);
     }
 
     public List<Token> tokenize() {
@@ -113,7 +117,6 @@ public class L1Lexer {
                         while (!isAtEnd() && !Character.isWhitespace(peek()) && invalid(peek())) {
                             e += advance();
                         }
-                        System.out.println("\"" + e + "\"");
                         if (e.length() == 1) {
                             end = start;
                             JVSError.log(fileName, line, "Invalid character '" + e + '\'', stmt, start, end);
