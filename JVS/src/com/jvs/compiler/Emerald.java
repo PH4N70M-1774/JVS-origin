@@ -16,8 +16,6 @@ public class Emerald implements CompilerModel {
         } else {
             this.fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
         }
-        System.out.println(filePath);
-        System.out.println(fileName);
     }
 
     public static CompilerModel getModel(String filePath) {
