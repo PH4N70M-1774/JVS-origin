@@ -4,7 +4,7 @@ public enum TokenType {
     // --------------------
     // Keywords
     // --------------------
-    PACKAGE, IMPORT, JVS, FUNC, VAR, CONST, RETURN_TYPE, RETURN,
+    PACKAGE, IMPORT, JVS, FUNC, VAR, CONST, RETURN_TYPE, RETURN, SELF,
     INHERITS, IMPLEMENTS, ANNOTATION, INIT,
     IF, ELIF, ELSE, SWITCH, CASE, DEFAULT,
     FOR, FOR_EACH, FOR_EVER, FOR_TIMES, WHILE, DO,
@@ -96,6 +96,7 @@ public enum TokenType {
             case "float" -> TokenType.FLOAT;
             case "char" -> TokenType.CHAR;
             case "boolean" -> TokenType.BOOLEAN;
+            case "self" -> TokenType.SELF;
             default -> TokenType.IDENTIFIER; // fallback for non-keywords
         };
     }
