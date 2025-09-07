@@ -22,7 +22,8 @@ public class Token {
     }
 
     @Override
-    public String toString(){
-        return type+((lexeme==null)?"":"("+lexeme+")");
+    public String toString() {
+        return
+            type + ((lexeme == null) ? "": "(" + ((type == TokenType.STRING_LITERAL) ? "\"" + lexeme + "\"" : lexeme) + ")");
     }
 }
