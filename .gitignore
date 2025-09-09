@@ -12,3 +12,5 @@ Arch.java
 JVS/.cspell
 .vscode/
 .cspell/custom-dictionary-workspace.txt
+test
+*.excalidraw

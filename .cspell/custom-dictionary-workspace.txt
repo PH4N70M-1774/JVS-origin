@@ -11,6 +11,7 @@ cmpne
 decr
 elif
 emptyline
+excalidraw
 fcmpe
 fcmpge
 fcmple
