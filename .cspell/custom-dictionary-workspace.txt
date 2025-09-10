@@ -1,5 +1,7 @@
 # Custom Dictionary Words
 azzert
+bino
+binop
 BRANCHF
 BRANCHT
 cmpe

@@ -35,6 +35,17 @@ public class ASTPrinter {
             BinaryOpNode binOp = (BinaryOpNode) node;
             printNode(binOp.left, false);
             printNode(binOp.right, true);
+        } else if (node instanceof IntAssignNode) {
+            IntAssignNode intAssignNode = (IntAssignNode) node;
+            printNode(intAssignNode.identifierNode, false);
+            printNode(intAssignNode.binaryOpNode, true);
+        } else if (node instanceof PrintNode) {
+            PrintNode printNode = (PrintNode) node;
+            for (int i = 0; i < printNode.nodesToPrint.size(); i++) {
+                boolean isLastPrint = (i == printNode.nodesToPrint.size() - 1);
+                printNode(printNode.nodesToPrint.get(i), isLastPrint);
+            }
+
         }
 
         tabs.removeLast();

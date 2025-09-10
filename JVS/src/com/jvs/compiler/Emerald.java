@@ -2,6 +2,8 @@ package com.jvs.compiler;
 
 import java.util.List;
 
+import com.jvs.compiler.nodes.ProgramNode;
+
 public class Emerald implements CompilerModel {
     private String filePath, fileName;
 
@@ -31,9 +33,12 @@ public class Emerald implements CompilerModel {
         List<Token> tokens = lexer.tokenize();
 
         // Parser - Parsing tokens.
-        // Printing the tokens since parser is not yet implemented.
-        for (Token token : tokens) {
-            System.out.println(token);
-        }
+        // Currently, the parser returns a default
+        Parser parser = P54Parser.getParser(tokens);
+        ProgramNode programNode = parser.parse();
+
+        System.out.println();
+        ASTPrinter printer = ASTPrinter.forNode(programNode);
+        printer.printAST();
     }
 }
