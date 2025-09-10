@@ -1,24 +1,24 @@
 package com.jvs.compiler.nodes;
 
 public class NumberNode implements Node {
-    public double value;
+    public String value;
     public boolean isFloat;
 
-    public NumberNode(double value, boolean isFloat) {
+    public NumberNode(String value, boolean isFloat) {
         this.value = value;
         this.isFloat = isFloat;
     }
 
     public int intValue() {
-        return (int) value;
+        return Integer.valueOf(value);
     }
 
     public double doubleValue() {
-        return value;
+        return Double.valueOf(value);
     }
 
     @Override
     public String toString() {
-        return "NumberNode(" + ((isFloat) ? value : ((int) value)) + ")";
+        return "NumberNode(" + value + ")";
     }
 }
