@@ -1,7 +1,5 @@
 package com.jvs.compiler;
 
-import java.util.List;
-
 import com.jvs.compiler.nodes.*;
 
 public interface Parser {
