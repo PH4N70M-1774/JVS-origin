@@ -16,7 +16,7 @@ public class Tracer {
         this.printStack = printStack;
     }
 
-    public String disassemble(int ip, int opcode, int sp, int dsp) {
+    public String disassemble(int ip, int opcode, int sp) {
         String name = Opcode.get(opcode).getName();
         int numOperands = Opcode.get(opcode).getNumOperands();
         String instruction = String.format("%04d: %-10s", ip, name);
@@ -38,12 +38,11 @@ public class Tracer {
             }
             instruction += Utilities.bytesToLong(bytes);
         }
-        return String.format("%-45s%s", instruction,((printStack)? getStackString(dsp):""));
+        return String.format("%-45s%s", instruction,((printStack)? getStackString(sp):""));
     }
 
-    public void disassembleAndPrint(int ip, int opcode, int sp, int dsp) {
-
-        System.out.println(disassemble(ip, opcode, sp, dsp));
+    public void disassembleAndPrint(int ip, int opcode, int sp) {
+        System.out.println(disassemble(ip, opcode, sp));
     }
 
     public String getStackString(int sp) {

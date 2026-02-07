@@ -9,7 +9,7 @@ public class VeloxVM {
     private static final int DEFAULT_STACK_SIZE = 1024;
     private static final int DEFAULT_MEMORY_SIZE = 1024;
 
-    private int ip, ip2, sp, dsp, globalLength, poolLength;
+    private int ip, ip2, sp, globalLength, poolLength;
 
     private int[] instructions;
 
@@ -312,13 +312,13 @@ public class VeloxVM {
 
     private void tracing(int opcode) {
         if (trace && traceLater) {
-            disassembledInstructions.add(tracer.disassemble(ip2, opcode, sp, dsp));
+            disassembledInstructions.add(tracer.disassemble(ip2, opcode, sp));
         } else if (trace) {
             if (!cursorAtLineStart) {
                 System.out.println();
                 cursorAtLineStart = true;
             }
-            tracer.disassembleAndPrint(ip2, opcode, sp, dsp);
+            tracer.disassembleAndPrint(ip2, opcode, sp);
         }
     }
 
@@ -349,7 +349,9 @@ public class VeloxVM {
                 System.out.println(
                         "===================================================POOL===================================================");
                 for (int i = 0; i < poolLength; i++) {
-                    System.out.printf("%04d: \"%s\"\n", i, pool[i]);
+                    String poolEntry = ((pool[i].endsWith("\n")) ? pool[i].substring(0, pool[i].length() - 1) + "\\n"
+                            : pool[i]);
+                    System.out.printf("%04d: \"%s\"\n", i, poolEntry);
                 }
                 System.out.println(
                         "==========================================================================================================");
