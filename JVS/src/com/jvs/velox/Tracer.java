@@ -22,7 +22,7 @@ public class Tracer {
         String instruction = String.format("%04d: %-10s", ip, name);
 
         if (numOperands == 1) {
-            if (name.equals("CALL")) {
+            if (name.equals("invoke")) {
                 instruction += metadata[instructions[ip + 1]].getName();
             } else {
                 instruction += instructions[ip + 1];

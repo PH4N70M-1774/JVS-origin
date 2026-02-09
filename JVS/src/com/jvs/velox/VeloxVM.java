@@ -301,6 +301,14 @@ public class VeloxVM {
                     stack[++sp] = Utilities.bytesToLong(longBytes);
 
                 }
+                case dup -> {
+                    try {
+                        long a = stack[sp];
+                        stack[++sp] = a;
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        throw new VeloxVMError("Stack Underflow Error", e);
+                    }
+                }
                 default -> {
                     ip += Opcode.get(opcode).getNumOperands();
                 }
