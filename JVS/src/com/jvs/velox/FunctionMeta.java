@@ -28,4 +28,10 @@ public class FunctionMeta {
     public int getAddress() {
         return address;
     }
+
+    @Override
+    public String toString() {
+        return "{Name: " + name + ", Number of Arguments: " + nArgs + ", Number of Locals: " + nLocals + ", Address: "
+                + address + "}";
+    }
 }

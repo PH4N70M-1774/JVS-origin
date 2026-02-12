@@ -357,9 +357,7 @@ public class VeloxVM {
                 System.out.println(
                         "===================================================POOL===================================================");
                 for (int i = 0; i < poolLength; i++) {
-                    String poolEntry = ((pool[i].endsWith("\n")) ? pool[i].substring(0, pool[i].length() - 1) + "\\n"
-                            : pool[i]);
-                    System.out.printf("%04d: \"%s\"\n", i, poolEntry);
+                    System.out.printf("%04d: \"%s\"\n", i, Utilities.getPrintString(pool[i]));
                 }
                 System.out.println(
                         "==========================================================================================================");

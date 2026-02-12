@@ -21,4 +21,8 @@ public class Utilities {
         }
         return value;
     }
+
+    public static String getPrintString(String s) {
+        return (((s.endsWith("\n")) ? (s.substring(0, (s.length() - 1)) + "\\n") : s));
+    }
 }
