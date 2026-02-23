@@ -27,6 +27,8 @@ public class VeloxVM {
     private Context ctx;
     private FunctionMeta[] metadata;
 
+    private long executionTime;
+
     public VeloxVM(VeloxInstructions vi) {
         this(vi.getInstructions(), vi.getPool(), vi.getPoolLength(), vi.getMetadata());
     }
@@ -48,6 +50,11 @@ public class VeloxVM {
         this.cursorAtLineStart = true;
         disassembledInstructions = new ArrayList<>();
         this.metadata = metadata;
+        this.executionTime = 0;
+    }
+
+    public long getExecutionTime() {
+        return executionTime;
     }
 
     public void trace(boolean trace, boolean traceLater, boolean printStack) {
@@ -67,6 +74,7 @@ public class VeloxVM {
     }
 
     public void cpu() throws VeloxVMError {
+        long before = System.currentTimeMillis();
         int opcode = instructions[ip];
         while (ip < instructions.length && opcode != exit) {
             opcode = instructions[ip];
@@ -316,6 +324,10 @@ public class VeloxVM {
             tracing(opcode);
         }
         tracePrint();
+
+        // Measure the execution time.
+        long after = System.currentTimeMillis();
+        executionTime = after - before;
     }
 
     private void tracing(int opcode) {
